@@ -26,7 +26,7 @@ export async function login(email: string, password: string) {
   return { user, token };
 }
 
-export async function register(email: string, password: string, name: string) {
+export async function register(email: string, password: string, name: string, role: string) {
   // Vérifier si l'utilisateur existe déjà
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) {
@@ -34,13 +34,13 @@ export async function register(email: string, password: string, name: string) {
   }
   // Hasher le mot de passe
   const hashedPassword = await bcrypt.hash(password, 10);
-  // Créer l'utilisateur
+  // Créer l'utilisateur avec le rôle spécifié
   const user = await prisma.user.create({
     data: {
       email,
       name,
-      // @ts-ignore
       password: hashedPassword,
+      role: role as any, // Assurez-vous que le rôle est valide dans votre schéma Prisma
     },
   });
   // Générer le token
