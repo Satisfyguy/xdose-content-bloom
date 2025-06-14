@@ -30,7 +30,7 @@ const FeedGrid: React.FC<FeedGridProps> = ({
       {isLoading && posts.length === 0 && (
         <>
           <FeedPostSkeleton variant="large" />
-          <div className="grid grid-cols-2 gap-4 mt-6">
+          <div className="grid grid-cols-2 gap-3 mt-6">
             <FeedPostSkeleton variant="small" />
             <FeedPostSkeleton variant="small" />
           </div>
@@ -51,7 +51,7 @@ const FeedGrid: React.FC<FeedGridProps> = ({
 
       {/* Small posts display */}
       {(smallPosts.length > 0 || (isLoading && posts.length > 0)) && (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           {smallPosts.map((post) => (
             <FeedPost 
               key={post.id} 

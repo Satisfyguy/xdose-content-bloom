@@ -59,7 +59,9 @@ const FeedPost = ({ post, variant, onToggleBookmark, onPostClick }: FeedPostProp
     playsinline: true,
     controls: false,
     preload: 'metadata',
-    fluid: true,
+    fluid: false,
+    responsive: false,
+    fill: true,
     sources: [{
       src: post.content,
       type: 'video/mp4'
@@ -72,7 +74,7 @@ const FeedPost = ({ post, variant, onToggleBookmark, onPostClick }: FeedPostProp
         className={`w-full ${imageAspectRatio} rounded-xl bg-gray-200 dark:bg-gray-700 cursor-pointer hover:opacity-90 transition-opacity overflow-hidden`}
         onClick={handlePostClick}
       >
-        <VideoPlayer options={videoJsOptions} isPlaying={false} className="w-full h-full" />
+        <VideoPlayer options={videoJsOptions} isPlaying={false} className="w-full h-full object-cover" />
       </div>
       <div className="mt-2 px-1">
         {variant === 'large' ? (
