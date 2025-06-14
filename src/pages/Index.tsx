@@ -7,6 +7,8 @@ import PostDetailModal from "@/components/PostDetailModal";
 import FeedPostSkeleton from "@/components/FeedPostSkeleton";
 import AnimatedHeaderText from "@/components/AnimatedHeaderText";
 import { Link } from "react-router-dom";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 // Définition de l'interface Post (mise à jour avec isBookmarked)
 interface Post {
@@ -45,6 +47,7 @@ const Index = () => {
 
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showOnlyBookmarked, setShowOnlyBookmarked] = useState(false);
 
   const observer = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useCallback((node: HTMLDivElement | null) => {
@@ -88,8 +91,11 @@ const Index = () => {
     }
   };
 
-  const mainPost = posts.length > 0 ? posts[0] : null;
-  const smallPosts = posts.slice(1);
+  // Filtrer les posts si l'option est activée
+  const displayedPosts = showOnlyBookmarked ? posts.filter(p => p.isBookmarked) : posts;
+
+  const mainPost = displayedPosts.length > 0 ? displayedPosts[0] : null;
+  const smallPosts = displayedPosts.slice(1);
 
   const handleOpenModal = (post: Post) => {
     setSelectedPost(post);
@@ -105,16 +111,39 @@ const Index = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       <header className="max-w-md mx-auto px-4 sm:px-6 py-6 flex items-center justify-between">
         <AnimatedHeaderText text="Feed" />
-        <Link to="/profile">
-          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400">
-            <User className="w-6 h-6" />
-          </Button>
-        </Link>
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="bookmarks-filter"
+              checked={showOnlyBookmarked}
+              onCheckedChange={setShowOnlyBookmarked}
+              className="data-[state=checked]:bg-yellow-500"
+            />
+            <Label htmlFor="bookmarks-filter" className="text-sm text-gray-500 dark:text-gray-400 cursor-pointer">
+              Favoris
+            </Label>
+          </div>
+          <Link to="/profile">
+            <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400">
+              <User className="w-6 h-6" />
+            </Button>
+          </Link>
+        </div>
       </header>
 
       <main className="max-w-md mx-auto px-4 sm:px-6 pb-24">
-        {page === 0 && isLoading && !mainPost && <FeedPostSkeleton variant="large" />}
+        {/* Skeletons pour le chargement initial */}
+        {page === 0 && isLoading && !mainPost && (
+            <>
+                <FeedPostSkeleton variant="large" />
+                <div className="grid grid-cols-2 gap-4 mt-6">
+                    <FeedPostSkeleton variant="small" />
+                    <FeedPostSkeleton variant="small" />
+                </div>
+            </>
+        )}
         
+        {/* Affichage du post principal */}
         {mainPost && (
           <div className="mb-6">
             <FeedPost 
@@ -126,7 +155,8 @@ const Index = () => {
           </div>
         )}
 
-        {(smallPosts.length > 0 || (isLoading && page > 0)) && (
+        {/* Affichage des posts plus petits */}
+        {(smallPosts.length > 0 || (isLoading && page > 0 && !showOnlyBookmarked)) && (
           <div className="grid grid-cols-2 gap-4">
             {smallPosts.map((post) => (
               <FeedPost 
@@ -137,7 +167,15 @@ const Index = () => {
                 onToggleBookmark={handleToggleBookmark}
               />
             ))}
-            {isLoading && page > 0 && (
+            {/* Skeletons pour le chargement infini si pas en mode filtre favoris uniquement */}
+            {isLoading && page > 0 && !showOnlyBookmarked && ( 
+              <>
+                <FeedPostSkeleton variant="small" />
+                <FeedPostSkeleton variant="small" />
+              </>
+            )}
+             {/* Skeletons pour le chargement infini si en mode filtre favoris et on attend des posts */}
+             {isLoading && page > 0 && showOnlyBookmarked && displayedPosts.length < posts.length && (
               <>
                 <FeedPostSkeleton variant="small" />
                 <FeedPostSkeleton variant="small" />
@@ -146,23 +184,21 @@ const Index = () => {
           </div>
         )}
         
-        {page === 0 && isLoading && posts.length < 3 && (
-          <div className="grid grid-cols-2 gap-4 mt-6">
-            <FeedPostSkeleton variant="small" />
-            <FeedPostSkeleton variant="small" />
-          </div>
+        {/* Cas où il n'y a aucun post à afficher (après filtrage ou initialement) et pas en chargement */}
+        {!isLoading && displayedPosts.length === 0 && (
+           <p className="text-center text-gray-500 dark:text-gray-400 mt-10">
+            {showOnlyBookmarked ? "Aucun post en favori." : "Aucun post pour le moment."}
+          </p>
         )}
 
+        {/* Indicateur pour charger plus de posts */}
         {hasMore && !isLoading && <div ref={loadMoreRef} className="h-10" />}
 
-        {isLoading && hasMore && (
+        {/* Message de chargement pendant le scroll infini */}
+        {isLoading && hasMore && posts.length > 0 && ( 
           <div className="text-center py-4">
             <p className="text-gray-500 dark:text-gray-400">Chargement...</p>
           </div>
-        )}
-
-        {!isLoading && posts.length === 0 && !hasMore && (
-          <p className="text-center text-gray-500 dark:text-gray-400 mt-10">No posts yet.</p>
         )}
       </main>
 
