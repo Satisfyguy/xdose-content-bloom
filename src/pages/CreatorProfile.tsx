@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,9 +8,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, MessageCircle, Share } from "lucide-react";
 import SubscriptionPlan from "@/components/SubscriptionPlan";
 import TipButton from "@/components/TipButton";
+import VideoPost from "@/components/VideoPost";
+import PostDetailModal from "@/components/PostDetailModal";
+import type { Post } from '@/types';
 
 const CreatorProfile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   const creator = {
     name: "Emma",
@@ -23,13 +28,44 @@ const CreatorProfile = () => {
     isVerified: true
   };
 
-  const actualPosts = [
-    "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png",
-    "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png",
-    "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png",
-    "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png",
-    "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png",
-    "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png"
+  // Posts vidéo gratuits
+  const freeVideoPosts: Post[] = [
+    {
+      id: 1,
+      creator: "Emma",
+      avatar: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png",
+      timeAgo: "2h",
+      content: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      likes: 245,
+      caption: "Free photography tips for beginners",
+      isSubscribed: false,
+      isPremium: false,
+      isBookmarked: false
+    },
+    {
+      id: 2,
+      creator: "Emma",
+      avatar: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png",
+      timeAgo: "5h",
+      content: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+      likes: 189,
+      caption: "Camera settings explained",
+      isSubscribed: false,
+      isPremium: false,
+      isBookmarked: false
+    },
+    {
+      id: 3,
+      creator: "Emma",
+      avatar: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png",
+      timeAgo: "1d",
+      content: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      likes: 312,
+      caption: "Basic composition rules",
+      isSubscribed: false,
+      isPremium: false,
+      isBookmarked: false
+    }
   ];
 
   const subscriptionPlans = [
@@ -55,6 +91,14 @@ const CreatorProfile = () => {
 
   const fanAccessPlan = subscriptionPlans.find(plan => plan.name === "Fan Access");
   const supporterPlusPlan = subscriptionPlans.find(plan => plan.name === "Supporter Plus");
+
+  const handlePostClick = (post: Post) => {
+    setSelectedPost(post);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedPost(null);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
@@ -128,7 +172,7 @@ const CreatorProfile = () => {
             <div className="flex space-x-6 text-sm">
               <div className="text-center">
                 <div className="font-bold text-lg text-gray-900 dark:text-white">{creator.posts}</div>
-                <div className="text-gray-600 dark:text-gray-400">Posts</div>
+                <div className="text-gray-600 dark:text-gray-400">Videos</div>
               </div>
               <div className="text-center">
                 <div className="font-bold text-lg text-gray-900 dark:text-white">{creator.followers}</div>
@@ -142,19 +186,7 @@ const CreatorProfile = () => {
           </div>
         </div>
 
-        {/* Subscription Plans section REMOVED as per user request */}
-        {/* 
-          <div className="px-6 py-6">
-            <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Subscribe for exclusive content</h2>
-            <div className="grid gap-4">
-              {subscriptionPlans.map((plan, index) => (
-                <SubscriptionPlan key={index} plan={plan} />
-              ))}
-            </div>
-          </div> 
-        */}
-
-        {/* Content Tabs - REWORKED */}
+        {/* Content Tabs */}
         <div className="px-6 py-8">
           <Tabs defaultValue="free" className="w-full">
             <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-800">
@@ -164,22 +196,21 @@ const CreatorProfile = () => {
             </TabsList>
             
             <TabsContent value="free" className="mt-6">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Free Content</h2>
-              {actualPosts.length > 0 ? (
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Free Videos</h2>
+              {freeVideoPosts.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 md:gap-2">
-                  {actualPosts.map((post, index) => (
-                    <div key={index} className="aspect-square bg-neutral-200 dark:bg-neutral-800 rounded-lg overflow-hidden">
-                      <img 
-                        src={post} 
-                        alt={`Post ${index + 1}`} 
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
+                  {freeVideoPosts.map((post) => (
+                    <VideoPost
+                      key={post.id}
+                      videoUrl={post.content}
+                      alt={`Video ${post.id}`}
+                      onClick={() => handlePostClick(post)}
+                    />
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-10 text-gray-500 dark:text-gray-400">
-                  <p className="text-lg">No free content available at the moment.</p>
+                  <p className="text-lg">No free videos available at the moment.</p>
                 </div>
               )}
             </TabsContent>
@@ -188,7 +219,7 @@ const CreatorProfile = () => {
               {fanAccessPlan ? (
                 <>
                   <h2 className="text-xl font-semibold mb-4 text-center text-gray-900 dark:text-white">Unlock Fan Access</h2>
-                  <p className="text-center text-gray-600 dark:text-gray-400 mb-6">Subscribe to the "{fanAccessPlan.name}" tier to view this content.</p>
+                  <p className="text-center text-gray-600 dark:text-gray-400 mb-6">Subscribe to the "{fanAccessPlan.name}" tier to view exclusive videos.</p>
                   <div className="max-w-sm mx-auto">
                     <SubscriptionPlan plan={fanAccessPlan} />
                   </div>
@@ -202,7 +233,7 @@ const CreatorProfile = () => {
                {supporterPlusPlan ? (
                 <>
                   <h2 className="text-xl font-semibold mb-4 text-center text-gray-900 dark:text-white">Unlock Supporter Plus</h2>
-                  <p className="text-center text-gray-600 dark:text-gray-400 mb-6">Subscribe to the "{supporterPlusPlan.name}" tier for the best experience.</p>
+                  <p className="text-center text-gray-600 dark:text-gray-400 mb-6">Subscribe to the "{supporterPlusPlan.name}" tier for premium video content.</p>
                   <div className="max-w-sm mx-auto">
                     <SubscriptionPlan plan={supporterPlusPlan} />
                   </div>
@@ -214,8 +245,12 @@ const CreatorProfile = () => {
           </Tabs>
         </div>
 
-        <div className="h-20"></div> {/* Spacer for bottom content */}
+        <div className="h-20"></div>
       </main>
+      
+      {selectedPost && (
+        <PostDetailModal post={selectedPost} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };

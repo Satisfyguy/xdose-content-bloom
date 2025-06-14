@@ -1,13 +1,17 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import NavigationBar from "@/components/NavigationBar";
 import TipButton from "@/components/TipButton";
-// Removed SubscriptionPlan import as it's no longer used directly on this page
-// import SubscriptionPlan from "@/components/SubscriptionPlan"; 
+import VideoPost from "@/components/VideoPost";
+import PostDetailModal from "@/components/PostDetailModal";
+import type { Post } from '@/types';
 import { Edit3 } from "lucide-react";
 
 const Profile = () => {
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+
   const user = {
     name: "Emma",
     username: "@emma_photo",
@@ -19,37 +23,67 @@ const Profile = () => {
     isOwnProfile: true,
   };
 
-  const posts = [
-    "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png",
-    "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png",
-    "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png",
-    "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png",
-  ];
-  const postCount = posts.length;
-
-  // Updated subscription tiers to English and new structure - this constant might become unused if not used elsewhere.
-  // For now, I'll leave it in case it's used by the tab implementation later.
-  // If it's confirmed to be unused after all Profile page changes, we can remove it.
-  const subscriptionTiers = [
-    { 
-      name: "Fan Access", 
-      price: "$4.99", 
-      benefits: ["Access to select posts", "Join community chat", "Monthly Q&A"], 
-      isRecommended: false 
+  // Posts vidéo simulés
+  const videoPosts: Post[] = [
+    {
+      id: 1,
+      creator: "Emma",
+      avatar: "/lovable-uploads/8bfa086c-cf08-44da-97b5-dab0efd545e1.png",
+      timeAgo: "2h",
+      content: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      likes: 245,
+      caption: "Beautiful sunset photography session",
+      isSubscribed: false,
+      isPremium: false,
+      isBookmarked: false
     },
-    { 
-      name: "Supporter Plus", 
-      price: "$9.99", 
-      benefits: ["Everything in Fan Access", "Exclusive photo sets", "Early access to new content"], 
-      isRecommended: true 
+    {
+      id: 2,
+      creator: "Emma",
+      avatar: "/lovable-uploads/8bfa086c-cf08-44da-97b5-dab0efd545e1.png",
+      timeAgo: "5h",
+      content: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+      likes: 189,
+      caption: "Urban street photography tips",
+      isSubscribed: false,
+      isPremium: false,
+      isBookmarked: false
     },
-    { 
-      name: "VIP Inner Circle", 
-      price: "$24.99", 
-      benefits: ["All Supporter Plus perks", "Behind-the-scenes videos", "Direct messaging priority", "Personalized thank-you note"], 
-      isRecommended: false 
+    {
+      id: 3,
+      creator: "Emma",
+      avatar: "/lovable-uploads/8bfa086c-cf08-44da-97b5-dab0efd545e1.png",
+      timeAgo: "1d",
+      content: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      likes: 312,
+      caption: "Portrait lighting techniques",
+      isSubscribed: false,
+      isPremium: false,
+      isBookmarked: false
+    },
+    {
+      id: 4,
+      creator: "Emma",
+      avatar: "/lovable-uploads/8bfa086c-cf08-44da-97b5-dab0efd545e1.png",
+      timeAgo: "2d",
+      content: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+      likes: 156,
+      caption: "Nature photography workshop",
+      isSubscribed: false,
+      isPremium: false,
+      isBookmarked: false
     }
   ];
+
+  const postCount = videoPosts.length;
+
+  const handlePostClick = (post: Post) => {
+    setSelectedPost(post);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedPost(null);
+  };
 
   return (
     <div className="min-h-screen bg-neutral-100 dark:bg-neutral-950 text-neutral-800 dark:text-neutral-200 flex flex-col">
@@ -84,7 +118,7 @@ const Profile = () => {
           <div className="flex space-x-6 mb-8 text-center">
             <div>
               <p className="text-xl font-semibold">{postCount}</p>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 uppercase">Posts</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 uppercase">Videos</p>
             </div>
             <div>
               <p className="text-xl font-semibold">{user.followers}</p>
@@ -109,27 +143,23 @@ const Profile = () => {
             {!user.isOwnProfile && <TipButton creatorName={user.name} />} 
           </div>
 
-          {/* Subscription Tiers Section - REMOVED */}
-          {/* Posts Grid */}
+          {/* Videos Grid */}
           <div>
-            {/* Posts grid title and content */}
-            <h2 className="text-2xl font-semibold mb-6 text-center">Posts</h2>
-            {posts.length > 0 ? (
-              
+            <h2 className="text-2xl font-semibold mb-6 text-center">Videos</h2>
+            {videoPosts.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 md:gap-2 w-full">
-                {posts.map((post, index) => (
-                  <div key={index} className="aspect-square bg-neutral-200 dark:bg-neutral-800 rounded-lg overflow-hidden">
-                    <img 
-                      src={post} 
-                      alt={`Post ${index + 1}`} 
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
+                {videoPosts.map((post) => (
+                  <VideoPost
+                    key={post.id}
+                    videoUrl={post.content}
+                    alt={`Video ${post.id}`}
+                    onClick={() => handlePostClick(post)}
+                  />
                 ))}
               </div>
             ) : (
               <div className="text-center py-10 text-neutral-500 dark:text-neutral-400">
-                <p className="text-xl mb-2">No posts yet.</p>
+                <p className="text-xl mb-2">No videos yet.</p>
                 <p>Check back soon!</p>
               </div>
             )}
@@ -137,6 +167,10 @@ const Profile = () => {
         </div>
       </main>
       <NavigationBar />
+      
+      {selectedPost && (
+        <PostDetailModal post={selectedPost} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };
