@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import videojs from 'video.js';
 
@@ -5,9 +6,10 @@ export interface VideoPlayerProps {
   options: videojs.PlayerOptions;
   onReady?: (player: videojs.Player) => void;
   className?: string;
+  isPlaying?: boolean;
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ options, onReady, className }) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({ options, onReady, className, isPlaying }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<videojs.Player | null>(null);
 
@@ -29,6 +31,19 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ options, onReady, className }
         }
     }
   }, [options, onReady]);
+
+  useEffect(() => {
+    const player = playerRef.current;
+    if (player && !player.isDisposed()) {
+      if (isPlaying) {
+        player.play().catch(e => console.error("La lecture de la vidéo a échoué", e));
+      } else {
+        if (!player.paused()) {
+          player.pause();
+        }
+      }
+    }
+  }, [isPlaying]);
 
   // Détruire le lecteur lorsque le composant est démonté
   useEffect(() => {

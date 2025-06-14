@@ -1,4 +1,3 @@
-
 import React from 'react';
 import FeedPost from "@/components/FeedPost";
 import FeedPostSkeleton from "@/components/FeedPostSkeleton";
@@ -7,7 +6,6 @@ import type { Post, SortOption } from '@/types'; // SortOption might be needed f
 interface FeedGridProps {
   posts: Post[];
   isLoading: boolean;
-  onPostClick: (post: Post) => void;
   onToggleBookmark: (postId: number) => void;
   showOnlyBookmarked: boolean; // To customize the "no posts" message
   sortOption: SortOption; // To customize the "no posts" message
@@ -16,7 +14,6 @@ interface FeedGridProps {
 const FeedGrid: React.FC<FeedGridProps> = ({
   posts,
   isLoading,
-  onPostClick,
   onToggleBookmark,
   showOnlyBookmarked,
   sortOption,
@@ -43,7 +40,6 @@ const FeedGrid: React.FC<FeedGridProps> = ({
           <FeedPost 
             post={mainPost} 
             variant="large" 
-            onPostClick={onPostClick} 
             onToggleBookmark={onToggleBookmark}
           />
         </div>
@@ -57,7 +53,6 @@ const FeedGrid: React.FC<FeedGridProps> = ({
               key={post.id} 
               post={post} 
               variant="small" 
-              onPostClick={onPostClick} 
               onToggleBookmark={onToggleBookmark}
             />
           ))}

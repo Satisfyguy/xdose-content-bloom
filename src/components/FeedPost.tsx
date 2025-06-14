@@ -21,16 +21,17 @@ interface Post {
 interface FeedPostProps {
   post: Post;
   variant: 'large' | 'small';
-  onPostClick: (post: Post) => void;
   onToggleBookmark: (postId: number) => void;
 }
 
-const FeedPost = ({ post, variant, onPostClick, onToggleBookmark }: FeedPostProps) => {
+const FeedPost = ({ post, variant, onToggleBookmark }: FeedPostProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [currentLikes, setCurrentLikes] = useState(post.likes);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     setCurrentLikes(post.likes);
+    setIsPlaying(false);
   }, [post.likes, post.id]);
 
   const handleLikeClick = (e: React.MouseEvent) => {
@@ -44,17 +45,21 @@ const FeedPost = ({ post, variant, onPostClick, onToggleBookmark }: FeedPostProp
     onToggleBookmark(post.id);
   };
 
+  const handlePostClick = () => {
+    setIsPlaying(p => !p);
+  }
+
   const imageAspectRatio = variant === 'large' ? 'aspect-video' : 'aspect-square';
   const iconSize = variant === 'large' ? 'w-5 h-5' : 'w-4 h-4';
   const actionButtonSpace = variant === 'large' ? 'space-x-4' : 'space-x-3';
   const textClass = variant === 'large' ? 'text-sm' : 'text-xs';
 
   const videoJsOptions = useMemo((): videojs.PlayerOptions => ({
-    autoplay: true,
-    muted: true,
+    autoplay: false,
+    muted: false,
     loop: true,
     playsinline: true,
-    controls: false,
+    controls: true,
     preload: 'metadata',
     fluid: true,
     sources: [{
@@ -67,9 +72,9 @@ const FeedPost = ({ post, variant, onPostClick, onToggleBookmark }: FeedPostProp
     <div className="w-full">
       <div
         className={`w-full ${imageAspectRatio} rounded-xl bg-gray-200 dark:bg-gray-700 cursor-pointer hover:opacity-90 transition-opacity overflow-hidden`}
-        onClick={() => onPostClick(post)}
+        onClick={handlePostClick}
       >
-        <VideoPlayer options={videoJsOptions} className="w-full h-full object-cover" />
+        <VideoPlayer options={videoJsOptions} isPlaying={isPlaying} className="w-full h-full object-cover" />
       </div>
       <div className="mt-2 px-1">
         {variant === 'large' ? (
