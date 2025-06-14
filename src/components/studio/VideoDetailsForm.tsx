@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface VideoDetailsFormProps {
   title: string;
@@ -12,6 +13,8 @@ interface VideoDetailsFormProps {
   onDescriptionChange: (value: string) => void;
   tags: string;
   onTagsChange: (value: string) => void;
+  tier: string;
+  onTierChange: (value: string) => void;
 }
 
 const VideoDetailsForm: React.FC<VideoDetailsFormProps> = ({
@@ -21,6 +24,8 @@ const VideoDetailsForm: React.FC<VideoDetailsFormProps> = ({
   onDescriptionChange,
   tags,
   onTagsChange,
+  tier,
+  onTierChange,
 }) => {
   return (
     <Card className="bg-white/80 backdrop-blur-sm border-gray-200/20">
@@ -60,6 +65,23 @@ const VideoDetailsForm: React.FC<VideoDetailsFormProps> = ({
           />
           <p className="text-xs text-gray-500 mt-1">
             Use tags to help people discover your content
+          </p>
+        </div>
+        
+        <div>
+          <Label htmlFor="tier">Subscription Tier</Label>
+          <Select value={tier} onValueChange={onTierChange}>
+            <SelectTrigger id="tier" className="mt-2">
+              <SelectValue placeholder="Select a tier" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="free">Free</SelectItem>
+              <SelectItem value="fan-access">Fan Access</SelectItem>
+              <SelectItem value="supporter-plus">Supporter Plus</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-gray-500 mt-1">
+            Choose who can view this video.
           </p>
         </div>
       </CardContent>

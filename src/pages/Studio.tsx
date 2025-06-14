@@ -20,6 +20,9 @@ const Studio = () => {
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState('');
   const [isDragging, setIsDragging] = useState(false);
+  const [tier, setTier] = useState<string>('free');
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState<'waiting' | 'uploading' | 'processing' | 'complete'>('waiting');
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -35,6 +38,24 @@ const Studio = () => {
       const url = URL.createObjectURL(file);
       setVideoUrl(url);
       setIsPlaying(false); // Ensure video is paused on new selection
+
+      // Simulate upload progress
+      setUploadStatus('uploading');
+      setUploadProgress(0);
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) { // Stop at 90 to show final jump to 100
+            clearInterval(progressInterval);
+            setUploadProgress(100);
+            setUploadStatus('processing');
+            setTimeout(() => {
+              setUploadStatus('complete');
+            }, 1500); // Simulate processing time
+            return 100;
+          }
+          return prev + 10;
+        });
+      }, 200);
     }
   };
 
@@ -95,11 +116,14 @@ const Studio = () => {
     if (fileInputRef.current) { // Reset file input
         fileInputRef.current.value = "";
     }
+    // Reset progress
+    setUploadProgress(0);
+    setUploadStatus('waiting');
   };
 
   const handlePublish = () => {
     // Placeholder for publish logic
-    console.log('Publishing video:', { title, description, tags, video: selectedVideo?.name });
+    console.log('Publishing video:', { title, description, tags, tier, video: selectedVideo?.name });
     // Potentially navigate away or show a success message
   };
 
@@ -107,7 +131,7 @@ const Studio = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
       <StudioHeader
         onPublishClick={handlePublish}
-        isPublishDisabled={!selectedVideo || !title.trim()}
+        isPublishDisabled={!selectedVideo || !title.trim() || uploadStatus !== 'complete'}
       />
 
       <main className="max-w-md mx-auto p-6 space-y-6">
@@ -133,11 +157,17 @@ const Studio = () => {
           onDescriptionChange={setDescription}
           tags={tags}
           onTagsChange={setTags}
+          tier={tier}
+          onTierChange={setTier}
         />
 
         <CreationChallengesSection challenges={creationChallenges} />
 
-        <UploadStatusCard selectedVideo={selectedVideo} />
+        <UploadStatusCard
+          selectedVideo={selectedVideo}
+          uploadStatus={uploadStatus}
+          uploadProgress={uploadProgress}
+        />
 
         <div className="h-20"></div> {/* Spacer for bottom */}
       </main>
