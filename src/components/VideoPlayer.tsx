@@ -4,22 +4,22 @@ import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 
 export interface VideoPlayerProps {
-  options: videojs.PlayerOptions;
-  onReady?: (player: videojs.Player) => void;
+  options: any;
+  onReady?: (player: any) => void;
   className?: string;
   isPlaying?: boolean;
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ options, onReady, className, isPlaying }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const playerRef = useRef<videojs.Player | null>(null);
+  const playerRef = useRef<any>(null);
 
   useEffect(() => {
     // S'assurer que le lecteur n'est initialisé qu'une seule fois
     if (videoRef.current && !playerRef.current) {
       const videoElement = videoRef.current;
 
-      playerRef.current = videojs(videoElement, options, function onPlayerReady(this: videojs.Player) {
+      playerRef.current = videojs(videoElement, options, function onPlayerReady(this: any) {
         if (onReady) {
           onReady(this);
         }
@@ -37,7 +37,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ options, onReady, className, 
     const player = playerRef.current;
     if (player && !player.isDisposed()) {
       if (isPlaying) {
-        player.play().catch(e => console.error("La lecture de la vidéo a échoué", e));
+        player.play().catch((e: any) => console.error("La lecture de la vidéo a échoué", e));
       } else {
         if (!player.paused()) {
           player.pause();
