@@ -30,12 +30,12 @@ const App = () => (
             <Route path="/creator/:id" element={<CreatorProfile />} />
             <Route path="/discover" element={<Discover />} />
             <Route path="/studio" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="creator">
                 <Studio />
               </ProtectedRoute>
             } />
             <Route path="/upload" element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="creator">
                 <Upload />
               </ProtectedRoute>
             } />

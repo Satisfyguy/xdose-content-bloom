@@ -24,7 +24,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onSwitchToSignup }) =>
     setError('');
 
     if (!email || !password) {
-      setError('Veuillez remplir tous les champs');
+      setError('Please fill in all fields');
       return;
     }
 
@@ -32,14 +32,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onSwitchToSignup }) =>
     if (success) {
       onSuccess?.();
     } else {
-      setError('Email ou mot de passe incorrect');
+      setError('Invalid email or password');
     }
   };
 
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl text-center">Connexion</CardTitle>
+        <CardTitle className="text-2xl text-center">Sign In</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -50,21 +50,21 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onSwitchToSignup }) =>
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="votre@email.com"
+              placeholder="your@email.com"
               className="mt-1"
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="password">Mot de passe</Label>
+            <Label htmlFor="password">Password</Label>
             <div className="relative mt-1">
               <Input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Votre mot de passe"
+                placeholder="Your password"
                 className="pr-10"
                 required
               />
@@ -93,18 +93,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onSwitchToSignup }) =>
             className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
             disabled={isLoading}
           >
-            {isLoading ? 'Connexion...' : 'Se connecter'}
+            {isLoading ? 'Signing In...' : 'Sign In'}
           </Button>
 
           {onSwitchToSignup && (
             <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-              Pas encore de compte ?{' '}
+              Don't have an account?{' '}
               <button
                 type="button"
                 onClick={onSwitchToSignup}
                 className="text-purple-600 hover:text-purple-500 font-medium"
               >
-                S'inscrire
+                Sign Up
               </button>
             </p>
           )}

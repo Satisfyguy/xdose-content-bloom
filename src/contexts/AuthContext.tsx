@@ -1,17 +1,20 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
+export type UserRole = 'viewer' | 'creator';
+
 interface User {
   id: string;
   email: string;
   name: string;
+  role: UserRole;
   avatar?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
-  signup: (email: string, password: string, name: string) => Promise<boolean>;
+  signup: (email: string, password: string, name: string, role: UserRole) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -35,11 +38,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Vérifier si l'utilisateur est connecté au chargement
+    // Check if user is logged in on load
     const token = localStorage.getItem('auth_token');
     if (token) {
-      // Ici on devrait valider le token avec l'API
-      // Pour l'instant, on simule avec des données du localStorage
+      // Here we should validate the token with the API
+      // For now, we simulate with localStorage data
       const userData = localStorage.getItem('user_data');
       if (userData) {
         setUser(JSON.parse(userData));
@@ -51,12 +54,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
-      // Ici on devrait faire l'appel API pour l'authentification
-      // Pour l'instant, on simule une connexion réussie
+      // Here we should make API call for authentication
+      // For now, we simulate a successful login
       const mockUser = {
         id: '1',
         email,
         name: email.split('@')[0],
+        role: 'creator' as UserRole, // Default role for existing users
         avatar: '/lovable-uploads/8bfa086c-cf08-44da-97b5-dab0efd545e1.png'
       };
       
@@ -72,15 +76,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const signup = async (email: string, password: string, name: string): Promise<boolean> => {
+  const signup = async (email: string, password: string, name: string, role: UserRole): Promise<boolean> => {
     try {
       setIsLoading(true);
-      // Ici on devrait faire l'appel API pour l'inscription
-      // Pour l'instant, on simule une inscription réussie
+      // Here we should make API call for registration
+      // For now, we simulate a successful signup
       const mockUser = {
         id: Date.now().toString(),
         email,
         name,
+        role,
         avatar: '/lovable-uploads/8bfa086c-cf08-44da-97b5-dab0efd545e1.png'
       };
       
