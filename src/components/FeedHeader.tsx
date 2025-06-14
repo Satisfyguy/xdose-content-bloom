@@ -43,11 +43,11 @@ const FeedHeader: React.FC<FeedHeaderProps> = ({
           <ListFilter className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           <Select value={sortOption} onValueChange={(value) => onSortOptionChange(value as SortOption)}>
             <SelectTrigger className="w-[180px] bg-transparent border-gray-300 dark:border-gray-700 text-sm">
-              <SelectValue placeholder="Trier par..." />
+              <SelectValue placeholder="Sort by..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="recent">Plus Récent</SelectItem>
-              <SelectItem value="popular">Plus Populaire</SelectItem>
+              <SelectItem value="recent">Most Recent</SelectItem>
+              <SelectItem value="popular">Most Popular</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -59,7 +59,7 @@ const FeedHeader: React.FC<FeedHeaderProps> = ({
             className="data-[state=checked]:bg-yellow-500"
           />
           <Label htmlFor="bookmarks-filter" className="text-sm text-gray-500 dark:text-gray-400 cursor-pointer">
-            Favoris
+            Bookmarks
           </Label>
         </div>
       </div>
@@ -68,3 +68,4 @@ const FeedHeader: React.FC<FeedHeaderProps> = ({
 };
 
 export default FeedHeader;
+
