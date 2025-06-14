@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Film, Sparkles, Lightbulb } from "lucide-react";
 import { useAuth } from '@/contexts/AuthContext';
-import { createVideo } from '@/services/databaseService';
+import { createVideo } from '@/services/mockDatabaseService';
 import { toast } from "sonner";
 
 import StudioHeader from '@/components/studio/StudioHeader';
