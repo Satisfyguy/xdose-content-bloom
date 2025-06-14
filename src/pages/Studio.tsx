@@ -1,29 +1,22 @@
 
 import React, { useState, useRef } from 'react';
-import { Film, Sparkles, Lightbulb } from "lucide-react"; // Keep only icons used for challenges data
+import { Film, Sparkles, Lightbulb } from "lucide-react";
 
 import StudioHeader from '@/components/studio/StudioHeader';
-import VideoUploadArea from '@/components/studio/VideoUploadArea';
+import MuxVideoUpload from '@/components/studio/MuxVideoUpload';
 import VideoDetailsForm from '@/components/studio/VideoDetailsForm';
 import CreationChallengesSection from '@/components/studio/CreationChallengesSection';
-import type { CreationChallenge } from '@/components/studio/CreationChallengesSection'; // Import type
-import UploadStatusCard from '@/components/studio/UploadStatusCard';
-// Removed imports: Card, CardContent, Button, Input, Label, Textarea, Badge, ArrowLeft, Upload, Video, Play, Pause, X, Award
-// Removed useNavigate as it's handled in StudioHeader
+import type { CreationChallenge } from '@/components/studio/CreationChallengesSection';
 
 const Studio = () => {
-  // navigate is now used in StudioHeader
   const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
-  const [videoUrl, setVideoUrl] = useState<string | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [muxAssetId, setMuxAssetId] = useState<string | null>(null);
+  const [muxPlaybackId, setMuxPlaybackId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [tier, setTier] = useState<string>('free');
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadStatus, setUploadStatus] = useState<'waiting' | 'uploading' | 'processing' | 'complete'>('waiting');
-  const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const creationChallenges: CreationChallenge[] = [
@@ -35,28 +28,12 @@ const Studio = () => {
   const handleVideoSelect = (file: File) => {
     if (file.type.startsWith('video/')) {
       setSelectedVideo(file);
-      const url = URL.createObjectURL(file);
-      setVideoUrl(url);
-      setIsPlaying(false); // Ensure video is paused on new selection
-
-      // Simulate upload progress
-      setUploadStatus('uploading');
-      setUploadProgress(0);
-      const progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
-          if (prev >= 90) { // Stop at 90 to show final jump to 100
-            clearInterval(progressInterval);
-            setUploadProgress(100);
-            setUploadStatus('processing');
-            setTimeout(() => {
-              setUploadStatus('complete');
-            }, 1500); // Simulate processing time
-            return 100;
-          }
-          return prev + 10;
-        });
-      }, 200);
     }
+  };
+
+  const handleUploadComplete = (assetId: string, playbackId: string) => {
+    setMuxAssetId(assetId);
+    setMuxPlaybackId(playbackId);
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -78,75 +55,52 @@ const Studio = () => {
     setIsDragging(false);
   };
 
-  const togglePlayPause = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
-  };
-  
-  // Need to update videoRef.current.onPlay and onPause if we want to sync isPlaying state correctly
-  // when native controls (if enabled) or other sources trigger play/pause
-  React.useEffect(() => {
-    const videoElement = videoRef.current;
-    if (videoElement) {
-        const handlePlay = () => setIsPlaying(true);
-        const handlePause = () => setIsPlaying(false);
-        videoElement.addEventListener('play', handlePlay);
-        videoElement.addEventListener('pause', handlePause);
-        return () => {
-            videoElement.removeEventListener('play', handlePlay);
-            videoElement.removeEventListener('pause', handlePause);
-        };
-    }
-  }, [videoRef]);
-
-
   const removeVideo = () => {
     setSelectedVideo(null);
-    setVideoUrl(null);
-    setIsPlaying(false);
-    if (videoUrl) {
-      URL.revokeObjectURL(videoUrl);
+    setMuxAssetId(null);
+    setMuxPlaybackId(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
-    if (fileInputRef.current) { // Reset file input
-        fileInputRef.current.value = "";
-    }
-    // Reset progress
-    setUploadProgress(0);
-    setUploadStatus('waiting');
   };
 
   const handlePublish = () => {
-    // Placeholder for publish logic
-    console.log('Publishing video:', { title, description, tags, tier, video: selectedVideo?.name });
-    // Potentially navigate away or show a success message
+    if (!muxAssetId || !muxPlaybackId) {
+      console.error('Video not ready for publishing');
+      return;
+    }
+
+    // Here we'll integrate with the database to save video metadata
+    console.log('Publishing video:', { 
+      title, 
+      description, 
+      tags, 
+      tier, 
+      muxAssetId,
+      muxPlaybackId,
+      fileName: selectedVideo?.name 
+    });
   };
+
+  const isPublishReady = selectedVideo && title.trim() && muxAssetId && muxPlaybackId;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
       <StudioHeader
         onPublishClick={handlePublish}
-        isPublishDisabled={!selectedVideo || !title.trim() || uploadStatus !== 'complete'}
+        isPublishDisabled={!isPublishReady}
       />
 
       <main className="max-w-md mx-auto p-6 space-y-6">
-        <VideoUploadArea
+        <MuxVideoUpload
           selectedVideo={selectedVideo}
-          videoUrl={videoUrl}
-          isPlaying={isPlaying}
-          isDragging={isDragging}
           onVideoSelect={handleVideoSelect}
+          onVideoRemove={removeVideo}
+          onUploadComplete={handleUploadComplete}
+          isDragging={isDragging}
           handleDrop={handleDrop}
           handleDragOver={handleDragOver}
           handleDragLeave={handleDragLeave}
-          togglePlayPause={togglePlayPause}
-          removeVideo={removeVideo}
-          videoRef={videoRef}
           fileInputRef={fileInputRef}
         />
 
@@ -163,13 +117,7 @@ const Studio = () => {
 
         <CreationChallengesSection challenges={creationChallenges} />
 
-        <UploadStatusCard
-          selectedVideo={selectedVideo}
-          uploadStatus={uploadStatus}
-          uploadProgress={uploadProgress}
-        />
-
-        <div className="h-20"></div> {/* Spacer for bottom */}
+        <div className="h-20"></div>
       </main>
     </div>
   );
