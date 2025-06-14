@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Heart, MessageSquare, Share, Bookmark } from "lucide-react"; // Ajout de Bookmark
+import { Heart, Bookmark } from "lucide-react"; // Suppression de MessageSquare et Share
 
 // Interface Post mise à jour
 interface Post {
@@ -13,27 +13,23 @@ interface Post {
   caption: string;
   isSubscribed: boolean;
   isPremium: boolean;
-  isBookmarked: boolean; // Ajout de isBookmarked
+  isBookmarked: boolean;
 }
 
 interface FeedPostProps {
   post: Post;
   variant: 'large' | 'small';
   onPostClick: (post: Post) => void;
-  onToggleBookmark: (postId: number) => void; // Nouvelle prop pour gérer le favori
+  onToggleBookmark: (postId: number) => void;
 }
 
 const FeedPost = ({ post, variant, onPostClick, onToggleBookmark }: FeedPostProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [currentLikes, setCurrentLikes] = useState(post.likes);
-  // L'état isBookmarked est maintenant géré par le parent (Index.tsx) via post.isBookmarked
 
-  // Synchroniser l'état local des likes si le post change (bien que 'likes' ne soit pas censé changer dynamiquement ici)
   useEffect(() => {
     setCurrentLikes(post.likes);
-    // setIsLiked(false); // Potentiellement réinitialiser si on veut que le like soit propre au post et non persistant localement
   }, [post.likes, post.id]);
-
 
   const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation(); 
@@ -41,20 +37,9 @@ const FeedPost = ({ post, variant, onPostClick, onToggleBookmark }: FeedPostProp
     setCurrentLikes(isLiked ? currentLikes - 1 : currentLikes + 1);
   };
 
-  const handleCommentClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    console.log("Bouton Commenter cliqué pour le post:", post.id);
-    onPostClick(post); 
-  };
-
-  const handleShareClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    console.log("Bouton Partager cliqué pour le post:", post.id);
-  };
-
   const handleBookmarkClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onToggleBookmark(post.id); // Appeler la fonction passée en prop
+    onToggleBookmark(post.id);
   };
 
   const imageAspectRatio = variant === 'large' ? 'aspect-video' : 'aspect-square';
@@ -79,7 +64,6 @@ const FeedPost = ({ post, variant, onPostClick, onToggleBookmark }: FeedPostProp
                 <h3 className="font-semibold text-gray-800 dark:text-gray-100">{post.creator}</h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400">{post.timeAgo}</p>
               </div>
-               {/* Espace pour le bouton bookmark à droite si design souhaité */}
                <button onClick={handleBookmarkClick} className="focus:outline-none p-1 group">
                 <Bookmark className={`${iconSize} group-hover:text-yellow-400 ${post.isBookmarked ? 'fill-yellow-500 text-yellow-500' : 'text-gray-600 dark:text-gray-400'}`} />
               </button>
@@ -89,16 +73,9 @@ const FeedPost = ({ post, variant, onPostClick, onToggleBookmark }: FeedPostProp
                 <Heart className={`${iconSize} group-hover:text-red-400 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-600 dark:text-gray-400'}`} />
                 <span className={`${textClass} font-medium`}>{currentLikes}</span>
               </button>
-              <button onClick={handleCommentClick} className="flex items-center space-x-1.5 focus:outline-none group">
-                <MessageSquare className={`${iconSize} text-gray-600 dark:text-gray-400 group-hover:text-blue-400`} />
-              </button>
-              <button onClick={handleShareClick} className="flex items-center space-x-1.5 focus:outline-none group">
-                <Share className={`${iconSize} text-gray-600 dark:text-gray-400 group-hover:text-green-400`} />
-              </button>
-              {/* Bouton Bookmark déplacé en haut à droite pour la variante large */}
             </div>
           </>
-        ) : ( // Variante Small
+        ) : (
           <>
             <div className="flex justify-between items-center mt-1">
                 <h3 className="font-semibold text-sm text-gray-800 dark:text-gray-100">{post.creator}</h3>
@@ -112,13 +89,6 @@ const FeedPost = ({ post, variant, onPostClick, onToggleBookmark }: FeedPostProp
                 <Heart className={`${iconSize} group-hover:text-red-400 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-600 dark:text-gray-400'}`} />
                 <span className={`${textClass} font-medium`}>{currentLikes}</span>
               </button>
-              <button onClick={handleCommentClick} className="flex items-center space-x-1 focus:outline-none group">
-                <MessageSquare className={`${iconSize} text-gray-600 dark:text-gray-400 group-hover:text-blue-400`} />
-              </button>
-              <button onClick={handleShareClick} className="flex items-center space-x-1 focus:outline-none group">
-                <Share className={`${iconSize} text-gray-600 dark:text-gray-400 group-hover:text-green-400`} />
-              </button>
-               {/* Bouton Bookmark déplacé en haut à droite pour la variante small */}
             </div>
           </>
         )}
