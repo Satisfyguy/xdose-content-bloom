@@ -1,12 +1,21 @@
-
 import React, { useState, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Upload, Video, Play, Pause, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Upload, Video, Play, Pause, X, Award, Film, Sparkles, Lightbulb } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+interface CreationChallenge {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  participants?: number;
+  deadline?: string;
+}
 
 const Studio = () => {
   const navigate = useNavigate();
@@ -19,6 +28,12 @@ const Studio = () => {
   const [isDragging, setIsDragging] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const creationChallenges: CreationChallenge[] = [
+    { id: "challenge1", title: "Le Désir en Noir et Blanc", description: "Exprimez la passion et l'érotisme en utilisant uniquement des nuances de gris.", icon: Film, participants: 120, deadline: "2025-07-15" },
+    { id: "challenge2", title: "Poésie Corporelle", description: "Créez une vidéo artistique mettant en scène la beauté du corps humain en mouvement.", icon: Sparkles, participants: 85, deadline: "2025-07-30" },
+    { id: "challenge3", title: "Ma Première Fois (Réinventée)", description: "Racontez une histoire originale et sensuelle sur le thème de la découverte.", icon: Lightbulb, participants: 210, deadline: "2025-08-10" },
+  ];
 
   const handleVideoSelect = (file: File) => {
     if (file.type.startsWith('video/')) {
@@ -207,6 +222,47 @@ const Studio = () => {
               <p className="text-xs text-gray-500 mt-1">
                 Utilisez des tags pour aider les gens à découvrir votre contenu
               </p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* Défis de Création */}
+        <Card className="bg-white/80 backdrop-blur-sm border-gray-200/20">
+          <CardContent className="p-6">
+            <div className="flex items-center space-x-2 mb-4">
+              <Award className="w-6 h-6 text-yellow-500" />
+              <h2 className="text-lg font-semibold">Défis de Création</h2>
+            </div>
+            <div className="space-y-4">
+              {creationChallenges.map((challenge) => {
+                const ChallengeIcon = challenge.icon;
+                return (
+                  <Card key={challenge.id} className="bg-slate-50 dark:bg-slate-800/30 border-gray-200/50 dark:border-gray-700/50 hover:shadow-md transition-shadow">
+                    <CardContent className="p-4">
+                      <div className="flex items-start space-x-3">
+                        <div className="p-3 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex-shrink-0">
+                          <ChallengeIcon className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-base">{challenge.title}</h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 mb-2">{challenge.description}</p>
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-gray-500 dark:text-gray-400 space-y-1 sm:space-y-0">
+                            {challenge.participants && <span><Sparkles className="inline w-3 h-3 mr-1" /> {challenge.participants} participants</span>}
+                            {challenge.deadline && <span><Lightbulb className="inline w-3 h-3 mr-1" /> Date limite: {challenge.deadline}</span>}
+                          </div>
+                        </div>
+                        <Button 
+                          size="sm"
+                          variant="outline"
+                          className="mt-2 sm:mt-0 border-yellow-500 text-yellow-600 hover:bg-yellow-50 hover:text-yellow-700 dark:border-yellow-400 dark:text-yellow-300 dark:hover:bg-yellow-900/50 dark:hover:text-yellow-200 self-start sm:self-center"
+                        >
+                          Participer
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
