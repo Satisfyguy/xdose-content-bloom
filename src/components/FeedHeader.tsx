@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import AnimatedHeaderText from "@/components/AnimatedHeaderText";
+import { XDoseLogo } from '@/components/XDoseLogo';
 import type { SortOption } from '@/types';
 
 interface FeedHeaderProps {
@@ -31,7 +31,7 @@ const FeedHeader: React.FC<FeedHeaderProps> = ({
   return (
     <header className="max-w-md mx-auto px-4 sm:px-6 py-6">
       <div className="flex items-center justify-between mb-4">
-        <AnimatedHeaderText text="Feed" />
+        <XDoseLogo size="md" />
         <Link to="/profile">
           <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400">
             <User className="w-6 h-6" />

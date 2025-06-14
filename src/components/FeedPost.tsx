@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Heart, Bookmark } from "lucide-react"; // Suppression de MessageSquare et Share
 import VideoPlayer from './VideoPlayer';
-import type { PlayerOptions } from 'video.js/dist/types/player';
+import type PlayerOptions from 'video.js/dist/types/player';
 
 // Interface Post mise à jour
 interface Post {
