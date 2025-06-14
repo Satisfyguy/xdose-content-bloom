@@ -7,8 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Camera, Image, Video, Wand2, Palette, Type, Music } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useNavigate } from "react-router-dom";
 
 const Studio = () => {
+  const navigate = useNavigate();
   const [selectedMedia, setSelectedMedia] = useState<string | null>("/lovable-uploads/2b74d434-70f3-4444-a0e0-35b0e039b879.png");
   const [caption, setCaption] = useState('');
   const [isPremium, setIsPremium] = useState(false);
@@ -17,7 +19,7 @@ const Studio = () => {
   const creationTools = [
     { icon: Camera, label: "Camera", color: "from-blue-500 to-cyan-500" },
     { icon: Image, label: "Gallery", color: "from-green-500 to-emerald-500" },
-    { icon: Video, label: "Video", color: "from-red-500 to-pink-500" },
+    { icon: Video, label: "Video", color: "from-red-500 to-pink-500", action: () => navigate('/upload') },
     { icon: Wand2, label: "AI Magic", color: "from-purple-500 to-violet-500" },
   ];
 
@@ -33,7 +35,7 @@ const Studio = () => {
       {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-b border-gray-200/20 dark:border-gray-700/20">
         <div className="max-w-md mx-auto px-6 py-4 flex items-center justify-between">
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="text-lg font-semibold">Studio</div>
@@ -81,6 +83,7 @@ const Studio = () => {
                   key={index}
                   variant="outline"
                   className={`h-20 flex-col space-y-2 bg-gradient-to-br ${tool.color} text-white border-0 hover:opacity-90`}
+                  onClick={tool.action}
                 >
                   <Icon className="w-6 h-6" />
                   <span className="text-xs">{tool.label}</span>
