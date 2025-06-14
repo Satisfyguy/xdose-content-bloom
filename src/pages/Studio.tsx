@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,9 +31,9 @@ const Studio = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const creationChallenges: CreationChallenge[] = [
-    { id: "challenge1", title: "Le Désir en Noir et Blanc", description: "Exprimez la passion et l'érotisme en utilisant uniquement des nuances de gris.", icon: Film, participants: 120, deadline: "2025-07-15" },
-    { id: "challenge2", title: "Poésie Corporelle", description: "Créez une vidéo artistique mettant en scène la beauté du corps humain en mouvement.", icon: Sparkles, participants: 85, deadline: "2025-07-30" },
-    { id: "challenge3", title: "Ma Première Fois (Réinventée)", description: "Racontez une histoire originale et sensuelle sur le thème de la découverte.", icon: Lightbulb, participants: 210, deadline: "2025-08-10" },
+    { id: "challenge1", title: "Desire in Black and White", description: "Express passion and eroticism using only shades of gray.", icon: Film, participants: 120, deadline: "2025-07-15" },
+    { id: "challenge2", title: "Body Poetry", description: "Create an artistic video showcasing the beauty of the human body in motion.", icon: Sparkles, participants: 85, deadline: "2025-07-30" },
+    { id: "challenge3", title: "My First Time (Reimagined)", description: "Tell an original and sensual story on the theme of discovery.", icon: Lightbulb, participants: 210, deadline: "2025-08-10" },
   ];
 
   const handleVideoSelect = (file: File) => {
@@ -187,10 +188,10 @@ const Studio = () => {
         <Card className="bg-white/80 backdrop-blur-sm border-gray-200/20">
           <CardContent className="p-6 space-y-4">
             <div>
-              <Label htmlFor="title">Titre *</Label>
+              <Label htmlFor="title">Title *</Label>
               <Input
                 id="title"
-                placeholder="Donnez un titre accrocheur à votre vidéo..."
+                placeholder="Give your video a catchy title..."
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="mt-2"
@@ -202,7 +203,7 @@ const Studio = () => {
               <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
-                placeholder="Décrivez votre vidéo..."
+                placeholder="Describe your video..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="mt-2"
@@ -214,24 +215,24 @@ const Studio = () => {
               <Label htmlFor="tags">Tags</Label>
               <Input
                 id="tags"
-                placeholder="Séparez les tags par des virgules (ex: musique, dance, fun)"
+                placeholder="Separate tags with commas (e.g., music, dance, fun)"
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
                 className="mt-2"
               />
               <p className="text-xs text-gray-500 mt-1">
-                Utilisez des tags pour aider les gens à découvrir votre contenu
+                Use tags to help people discover your content
               </p>
             </div>
           </CardContent>
         </Card>
         
-        {/* Défis de Création */}
+        {/* Creation Challenges */}
         <Card className="bg-white/80 backdrop-blur-sm border-gray-200/20">
           <CardContent className="p-6">
             <div className="flex items-center space-x-2 mb-4">
               <Award className="w-6 h-6 text-yellow-500" />
-              <h2 className="text-lg font-semibold">Défis de Création</h2>
+              <h2 className="text-lg font-semibold">Creation Challenges</h2>
             </div>
             <div className="space-y-4">
               {creationChallenges.map((challenge) => {
@@ -248,7 +249,7 @@ const Studio = () => {
                           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 mb-2">{challenge.description}</p>
                           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-gray-500 dark:text-gray-400 space-y-1 sm:space-y-0">
                             {challenge.participants && <span><Sparkles className="inline w-3 h-3 mr-1" /> {challenge.participants} participants</span>}
-                            {challenge.deadline && <span><Lightbulb className="inline w-3 h-3 mr-1" /> Date limite: {challenge.deadline}</span>}
+                            {challenge.deadline && <span><Lightbulb className="inline w-3 h-3 mr-1" /> Deadline: {challenge.deadline}</span>}
                           </div>
                         </div>
                         <Button 
@@ -256,7 +257,7 @@ const Studio = () => {
                           variant="outline"
                           className="mt-2 sm:mt-0 border-yellow-500 text-yellow-600 hover:bg-yellow-50 hover:text-yellow-700 dark:border-yellow-400 dark:text-yellow-300 dark:hover:bg-yellow-900/50 dark:hover:text-yellow-200 self-start sm:self-center"
                         >
-                          Participer
+                          Participate
                         </Button>
                       </div>
                     </CardContent>
@@ -273,13 +274,13 @@ const Studio = () => {
             <div className="flex items-center space-x-2 mb-3">
               <Upload className="w-5 h-5 text-purple-600" />
               <h3 className="font-semibold text-purple-800">
-                {selectedVideo ? 'Prêt à publier' : 'En attente de vidéo'}
+                {selectedVideo ? 'Ready to publish' : 'Waiting for video'}
               </h3>
             </div>
             <p className="text-sm text-gray-600">
               {selectedVideo 
-                ? 'Votre vidéo sera traitée et disponible pour votre audience après publication.'
-                : 'Sélectionnez une vidéo pour commencer.'}
+                ? 'Your video will be processed and available to your audience after publication.'
+                : 'Select a video to get started.'}
             </p>
           </CardContent>
         </Card>

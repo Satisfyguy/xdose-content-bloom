@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useFeedData } from '@/hooks/useFeedData';
 import FeedHeader from '@/components/FeedHeader';
@@ -68,7 +67,7 @@ const Index = () => {
         {/* Loading message during infinite scroll */}
         {isLoading && hasMore && posts.length > 0 && ( 
           <div className="text-center py-4 max-w-md mx-auto px-4 sm:px-6">
-            <p className="text-gray-500 dark:text-gray-400">Chargement...</p>
+            <p className="text-gray-500 dark:text-gray-400">Loading...</p>
           </div>
         )}
       </div>
