@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Heart, Bookmark } from "lucide-react"; // Suppression de MessageSquare et Share
 import VideoPlayer from './VideoPlayer';
-import type videojs from 'video.js';
+import type { PlayerOptions } from 'video.js';
 
 // Interface Post mise à jour
 interface Post {
@@ -22,16 +21,15 @@ interface FeedPostProps {
   post: Post;
   variant: 'large' | 'small';
   onToggleBookmark: (postId: number) => void;
+  onPostClick: (post: Post) => void;
 }
 
-const FeedPost = ({ post, variant, onToggleBookmark }: FeedPostProps) => {
+const FeedPost = ({ post, variant, onToggleBookmark, onPostClick }: FeedPostProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [currentLikes, setCurrentLikes] = useState(post.likes);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     setCurrentLikes(post.likes);
-    setIsPlaying(false);
   }, [post.likes, post.id]);
 
   const handleLikeClick = (e: React.MouseEvent) => {
@@ -46,7 +44,7 @@ const FeedPost = ({ post, variant, onToggleBookmark }: FeedPostProps) => {
   };
 
   const handlePostClick = () => {
-    setIsPlaying(p => !p);
+    onPostClick(post);
   }
 
   const imageAspectRatio = variant === 'large' ? 'aspect-video' : 'aspect-square';
@@ -54,12 +52,12 @@ const FeedPost = ({ post, variant, onToggleBookmark }: FeedPostProps) => {
   const actionButtonSpace = variant === 'large' ? 'space-x-4' : 'space-x-3';
   const textClass = variant === 'large' ? 'text-sm' : 'text-xs';
 
-  const videoJsOptions = useMemo((): videojs.PlayerOptions => ({
+  const videoJsOptions = useMemo((): PlayerOptions => ({
     autoplay: false,
-    muted: false,
-    loop: true,
+    muted: true,
+    loop: false,
     playsinline: true,
-    controls: true,
+    controls: false,
     preload: 'metadata',
     fluid: true,
     sources: [{
@@ -74,7 +72,7 @@ const FeedPost = ({ post, variant, onToggleBookmark }: FeedPostProps) => {
         className={`w-full ${imageAspectRatio} rounded-xl bg-gray-200 dark:bg-gray-700 cursor-pointer hover:opacity-90 transition-opacity overflow-hidden`}
         onClick={handlePostClick}
       >
-        <VideoPlayer options={videoJsOptions} isPlaying={isPlaying} className="w-full h-full object-cover" />
+        <VideoPlayer options={videoJsOptions} isPlaying={false} className="w-full h-full object-cover" />
       </div>
       <div className="mt-2 px-1">
         {variant === 'large' ? (

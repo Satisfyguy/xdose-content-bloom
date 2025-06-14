@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useFeedData } from '@/hooks/useFeedData';
 import FeedHeader from '@/components/FeedHeader';
 import FeedGrid from '@/components/FeedGrid';
 import NavigationBar from "@/components/NavigationBar";
 import type { Post } from '@/types';
+import PostDetailModal from '@/components/PostDetailModal';
 
 const Index = () => {
   const {
@@ -18,6 +19,16 @@ const Index = () => {
     setSortOption,
     handleToggleBookmark,
   } = useFeedData("recent", false);
+
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+
+  const handlePostClick = (post: Post) => {
+    setSelectedPost(post);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedPost(null);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
@@ -35,6 +46,7 @@ const Index = () => {
           onToggleBookmark={handleToggleBookmark}
           showOnlyBookmarked={showOnlyBookmarked}
           sortOption={sortOption}
+          onPostClick={handlePostClick}
         />
 
         {/* Load more indicator */}
@@ -49,6 +61,10 @@ const Index = () => {
       </div>
 
       <NavigationBar />
+
+      {selectedPost && (
+        <PostDetailModal post={selectedPost} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };

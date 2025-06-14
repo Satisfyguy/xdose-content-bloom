@@ -1,3 +1,4 @@
+
 import React from 'react';
 import FeedPost from "@/components/FeedPost";
 import FeedPostSkeleton from "@/components/FeedPostSkeleton";
@@ -9,6 +10,7 @@ interface FeedGridProps {
   onToggleBookmark: (postId: number) => void;
   showOnlyBookmarked: boolean; // To customize the "no posts" message
   sortOption: SortOption; // To customize the "no posts" message
+  onPostClick: (post: Post) => void;
 }
 
 const FeedGrid: React.FC<FeedGridProps> = ({
@@ -17,6 +19,7 @@ const FeedGrid: React.FC<FeedGridProps> = ({
   onToggleBookmark,
   showOnlyBookmarked,
   sortOption,
+  onPostClick,
 }) => {
   const mainPost = posts.length > 0 ? posts[0] : null;
   const smallPosts = posts.slice(1);
@@ -41,6 +44,7 @@ const FeedGrid: React.FC<FeedGridProps> = ({
             post={mainPost} 
             variant="large" 
             onToggleBookmark={onToggleBookmark}
+            onPostClick={onPostClick}
           />
         </div>
       )}
@@ -54,6 +58,7 @@ const FeedGrid: React.FC<FeedGridProps> = ({
               post={post} 
               variant="small" 
               onToggleBookmark={onToggleBookmark}
+              onPostClick={onPostClick}
             />
           ))}
           {/* Skeletons for infinite scroll loading */}
