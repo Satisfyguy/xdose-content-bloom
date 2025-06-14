@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, TrendingUp, Sparkles, Film, PlaySquare, Lightbulb, Video, Filter, ListVideo, Clock, Zap, Clapperboard, Flame } from "lucide-react";
+import { Search, TrendingUp, Sparkles, Film, PlaySquare, Lightbulb, Video, Filter, ListVideo, Clock, Zap, Clapperboard, Flame, Award } from "lucide-react";
 import NavigationBar from "@/components/NavigationBar";
 import {
   Select,
@@ -21,6 +21,15 @@ interface ContentSuggestion {
   category?: string;
   duration?: number; 
   uploadDate?: string; 
+}
+
+interface CreationChallenge {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ElementType; // For a potential icon per challenge
+  participants?: number;
+  deadline?: string;
 }
 
 const Discover = () => {
@@ -90,6 +99,12 @@ const Discover = () => {
     { value: "relevance", label: "Relevance" },
     { value: "newest", label: "Nouveautés" },
     { value: "popular", label: "Popularité" },
+  ];
+
+  const creationChallenges: CreationChallenge[] = [
+    { id: "challenge1", title: "Le Désir en Noir et Blanc", description: "Exprimez la passion et l'érotisme en utilisant uniquement des nuances de gris.", icon: Film, participants: 120, deadline: "2025-07-15" },
+    { id: "challenge2", title: "Poésie Corporelle", description: "Créez une vidéo artistique mettant en scène la beauté du corps humain en mouvement.", icon: Sparkles, participants: 85, deadline: "2025-07-30" },
+    { id: "challenge3", title: "Ma Première Fois (Réinventée)", description: "Racontez une histoire originale et sensuelle sur le thème de la découverte.", icon: Lightbulb, participants: 210, deadline: "2025-08-10" },
   ];
 
   const latestUploads = [...contentSuggestions]
@@ -303,6 +318,45 @@ const Discover = () => {
                 Aucune nouvelle vidéo pour le moment.
               </p>
             )}
+          </div>
+        </div>
+
+        {/* Défis de Création */}
+        <div>
+          <div className="flex items-center space-x-2 mb-4">
+            <Award className="w-5 h-5 text-yellow-500" />
+            <h2 className="text-lg font-semibold">Défis de Création</h2>
+          </div>
+          <div className="space-y-3">
+            {creationChallenges.map((challenge) => {
+              const ChallengeIcon = challenge.icon;
+              return (
+                <Card key={challenge.id} className="bg-white/80 backdrop-blur-sm border-gray-200/20 hover:shadow-lg transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="flex items-start space-x-3">
+                      <div className="p-3 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500">
+                        <ChallengeIcon className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold">{challenge.title}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{challenge.description}</p>
+                        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                          {challenge.participants && <span>{challenge.participants} participants</span>}
+                          {challenge.deadline && <span>Date limite: {challenge.deadline}</span>}
+                        </div>
+                      </div>
+                      <Button 
+                        size="sm"
+                        variant="outline"
+                        className="border-yellow-500 text-yellow-600 hover:bg-yellow-50 hover:text-yellow-700 dark:border-yellow-400 dark:text-yellow-300 dark:hover:bg-yellow-900/50 dark:hover:text-yellow-200"
+                      >
+                        Participer
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
 
