@@ -1,19 +1,18 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, TrendingUp, Sparkles, Camera, Music, Palette } from "lucide-react";
+import { Search, TrendingUp, Sparkles, Film, PlaySquare, Lightbulb } from "lucide-react";
 import NavigationBar from "@/components/NavigationBar";
 
 const Discover = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const trendingTopics = [
-    { name: "Photography", icon: Camera, count: "12.5K", color: "from-blue-500 to-cyan-500" },
-    { name: "Music", icon: Music, count: "8.9K", color: "from-purple-500 to-pink-500" },
-    { name: "Art", icon: Palette, count: "15.2K", color: "from-orange-500 to-red-500" },
+    { name: "Short Films", icon: Film, count: "8.2K videos", color: "from-blue-500 to-cyan-500" },
+    { name: "Vlogs", icon: PlaySquare, count: "12.1K videos", color: "from-purple-500 to-pink-500" },
+    { name: "Tutorials", icon: Lightbulb, count: "9.5K videos", color: "from-orange-500 to-red-500" },
   ];
 
   const featuredCreators = [
@@ -62,7 +61,7 @@ const Discover = () => {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <Input
-              placeholder="Search creators, content, topics..."
+              placeholder="Search creators, videos, topics..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 bg-white/50 backdrop-blur-sm border-gray-200/20"
@@ -90,7 +89,7 @@ const Discover = () => {
                       </div>
                       <div className="flex-1">
                         <h3 className="font-semibold">{topic.name}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{topic.count} posts</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{topic.count}</p> 
                       </div>
                       <Badge variant="secondary" className="bg-purple-100 text-purple-800">
                         Hot
@@ -166,7 +165,7 @@ const Discover = () => {
         <Card className="bg-gradient-to-br from-blue-50/50 to-purple-50/50 border-blue-200/20">
           <CardContent className="p-4">
             <div className="flex items-center space-x-2 mb-3">
-              <Sparkles className="w-5 h-5 text-blue-600" />
+              <Sparkles className="w-5 h-5 text-blue-800" />
               <h3 className="font-semibold text-blue-800">AI Insights</h3>
             </div>
             <div className="space-y-2 text-sm">
