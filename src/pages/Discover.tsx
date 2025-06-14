@@ -3,19 +3,32 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, TrendingUp, Sparkles, Film, PlaySquare, Lightbulb, Video } from "lucide-react";
+import { Search, TrendingUp, Sparkles, Film, PlaySquare, Lightbulb, Video, Filter, ListVideo, Clock, Zap } from "lucide-react";
 import NavigationBar from "@/components/NavigationBar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ContentSuggestion {
   id: string;
   thumbnailUrl: string;
   videoUrl: string;
   title?: string;
+  category?: string; // Added for filtering
+  duration?: number; // Added for filtering (in minutes)
+  uploadDate?: string; // Added for filtering
 }
 
 const Discover = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [hoveredVideoId, setHoveredVideoId] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedDuration, setSelectedDuration] = useState<string>("any");
+  const [sortBy, setSortBy] = useState<string>("relevance");
 
   const trendingTopics = [
     { name: "Short Films", icon: Film, count: "8.2K videos", color: "from-blue-500 to-cyan-500" },
@@ -51,13 +64,45 @@ const Discover = () => {
   const placeholderVideoUrl = "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4";
 
   const contentSuggestions: ContentSuggestion[] = [
-    { id: "1", thumbnailUrl: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", videoUrl: placeholderVideoUrl, title: "Mountain Adventure" },
-    { id: "2", thumbnailUrl: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png", videoUrl: placeholderVideoUrl, title: "City Lights" },
-    { id: "3", thumbnailUrl: "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png", videoUrl: placeholderVideoUrl, title: "Forest Trail" },
-    { id: "4", thumbnailUrl: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", videoUrl: placeholderVideoUrl, title: "Ocean Waves" },
-    { id: "5", thumbnailUrl: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png", videoUrl: placeholderVideoUrl, title: "Desert Sunset" },
-    { id: "6", thumbnailUrl: "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png", videoUrl: placeholderVideoUrl, title: "Abstract Art" }
+    { id: "1", thumbnailUrl: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", videoUrl: placeholderVideoUrl, title: "Mountain Adventure", category: "Nature", duration: 5, uploadDate: "2025-06-10" },
+    { id: "2", thumbnailUrl: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png", videoUrl: placeholderVideoUrl, title: "City Lights", category: "Urban", duration: 3, uploadDate: "2025-06-12" },
+    { id: "3", thumbnailUrl: "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png", videoUrl: placeholderVideoUrl, title: "Forest Trail", category: "Nature", duration: 10, uploadDate: "2025-06-01" },
+    { id: "4", thumbnailUrl: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", videoUrl: placeholderVideoUrl, title: "Ocean Waves", category: "Nature", duration: 2, uploadDate: "2025-05-20" },
+    { id: "5", thumbnailUrl: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png", videoUrl: placeholderVideoUrl, title: "Desert Sunset", category: "Travel", duration: 7, uploadDate: "2025-06-14" },
+    { id: "6", thumbnailUrl: "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png", videoUrl: placeholderVideoUrl, title: "Abstract Art", category: "Art", duration: 1, uploadDate: "2025-06-13" }
   ];
+  
+  const videoCategories = ["all", "Nature", "Urban", "Travel", "Art", "Tutorials", "Vlogs", "Short Films"];
+  const videoDurations = [
+    { value: "any", label: "Any Duration" },
+    { value: "short", label: "Short (< 5 min)" },
+    { value: "medium", label: "Medium (5-15 min)" },
+    { value: "long", label: "Long (> 15 min)" },
+  ];
+  const sortOptions = [
+    { value: "relevance", label: "Relevance" },
+    { value: "newest", label: "Newest" },
+    { value: "popular", label: "Popular" },
+  ];
+
+  // Basic filtering logic (can be expanded)
+  const filteredContentSuggestions = contentSuggestions.filter(content => {
+    const matchesCategory = selectedCategory === "all" || content.category === selectedCategory;
+    const matchesDuration = selectedDuration === "any" || 
+      (selectedDuration === "short" && (content.duration ?? 0) < 5) ||
+      (selectedDuration === "medium" && (content.duration ?? 0) >= 5 && (content.duration ?? 0) <= 15) ||
+      (selectedDuration === "long" && (content.duration ?? 0) > 15);
+    // Search query matching (simple title search for now)
+    const matchesSearch = !searchQuery || (content.title && content.title.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    return matchesCategory && matchesDuration && matchesSearch;
+  }).sort((a, b) => {
+    if (sortBy === "newest") {
+      return new Date(b.uploadDate ?? 0).getTime() - new Date(a.uploadDate ?? 0).getTime();
+    }
+    // Add more sort logic for 'popular' or 'relevance' if needed
+    return 0;
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
@@ -69,7 +114,7 @@ const Discover = () => {
           </div>
           
           {/* Search Bar */}
-          <div className="relative">
+          <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <Input
               placeholder="Search creators, videos, topics..."
@@ -77,6 +122,52 @@ const Discover = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 bg-white/50 backdrop-blur-sm border-gray-200/20"
             />
+          </div>
+
+          {/* Filter Bar */}
+          <div className="flex items-center space-x-2 mb-2 text-sm">
+            <Filter className="w-4 h-4 text-gray-500" />
+            <span className="font-medium text-gray-700 dark:text-gray-300">Filters:</span>
+          </div>
+          <div className="grid grid-cols-3 gap-2 pb-3">
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="text-xs h-9">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                {videoCategories.map(category => (
+                  <SelectItem key={category} value={category} className="text-xs">
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={selectedDuration} onValueChange={setSelectedDuration}>
+              <SelectTrigger className="text-xs h-9">
+                <SelectValue placeholder="Duration" />
+              </SelectTrigger>
+              <SelectContent>
+                {videoDurations.map(duration => (
+                  <SelectItem key={duration.value} value={duration.value} className="text-xs">
+                    {duration.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="text-xs h-9">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                {sortOptions.map(option => (
+                  <SelectItem key={option.value} value={option.value} className="text-xs">
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </header>
@@ -159,7 +250,7 @@ const Discover = () => {
             <h2 className="text-lg font-semibold">For You</h2>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {contentSuggestions.map((content) => (
+            {filteredContentSuggestions.map((content) => (
               <div 
                 key={content.id} 
                 className="aspect-square relative group cursor-pointer rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700"
@@ -197,6 +288,11 @@ const Discover = () => {
                 )}
               </div>
             ))}
+            {filteredContentSuggestions.length === 0 && (
+              <p className="col-span-2 text-center text-gray-500 dark:text-gray-400 py-8">
+                No videos match your current filters. Try adjusting them!
+              </p>
+            )}
           </div>
         </div>
 
