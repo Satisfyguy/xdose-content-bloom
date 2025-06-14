@@ -7,8 +7,9 @@ import { Check } from "lucide-react";
 
 interface Plan {
   name: string;
-  price: number;
+  price: string; // Changed from number to string
   benefits: string[];
+  isRecommended?: boolean; // Added optional isRecommended prop
 }
 
 interface SubscriptionPlanProps {
@@ -16,40 +17,38 @@ interface SubscriptionPlanProps {
 }
 
 const SubscriptionPlan = ({ plan }: SubscriptionPlanProps) => {
-  const isRecommended = plan.name === "Premium";
+  const isRecommended = plan.isRecommended || plan.name === "Premium"; // Use prop or default to "Premium"
 
   return (
-    <Card className={`relative ${isRecommended ? 'border-purple-300 bg-gradient-to-br from-purple-50/50 to-pink-50/50' : 'bg-white/80 backdrop-blur-sm'}`}>
+    <Card className={`relative w-full ${isRecommended ? 'border-purple-300 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-900/30 dark:to-pink-900/30' : 'bg-white/80 dark:bg-neutral-800/50 backdrop-blur-sm'}`}>
       {isRecommended && (
-        <Badge className="absolute -top-2 left-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-          Most Popular
+        <Badge className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 text-xs">
+          Recommandé
         </Badge>
       )}
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-lg">{plan.name}</h3>
-          <div className="text-right">
-            <div className="text-2xl font-bold">${plan.price}</div>
-            <div className="text-sm text-gray-600">/month</div>
-          </div>
+      <CardContent className="p-6"> {/* Adjusted padding */}
+        <div className="flex flex-col items-center text-center mb-4"> {/* Centered text */}
+          <h3 className="font-semibold text-xl mb-1">{plan.name}</h3> {/* Increased font size */}
+          <div className="text-3xl font-bold mb-1">{plan.price}</div> {/* Display price string directly */}
+          {plan.price !== "Gratuit" && <div className="text-sm text-neutral-600 dark:text-neutral-400">/mois</div>}
         </div>
         
-        <ul className="space-y-2 mb-4">
+        <ul className="space-y-2 mb-6"> {/* Increased bottom margin */}
           {plan.benefits.map((benefit, index) => (
-            <li key={index} className="flex items-center space-x-2 text-sm">
-              <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
+            <li key={index} className="flex items-start space-x-2 text-sm"> {/* Align items start for longer text */}
+              <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
               <span>{benefit}</span>
             </li>
           ))}
         </ul>
         
         <Button 
-          className={`w-full ${isRecommended ? 
-            'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600' : 
-            'bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100'
+          className={`w-full font-semibold ${isRecommended ? 
+            'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white' : 
+            'bg-neutral-800 hover:bg-neutral-700 dark:bg-neutral-200 dark:text-neutral-900 dark:hover:bg-neutral-300 text-white' // Ensured text color for default
           }`}
         >
-          Subscribe to {plan.name}
+          S'abonner à {plan.name}
         </Button>
       </CardContent>
     </Card>
