@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import VideoPlayer from './VideoPlayer';
 import type { Post } from '@/types';
-import type { PlayerOptions } from 'video.js';
+import videojs from 'video.js';
 import { X } from 'lucide-react';
 
 interface PostDetailModalProps {
@@ -11,7 +11,7 @@ interface PostDetailModalProps {
 }
 
 const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
-  const videoJsOptions: PlayerOptions = {
+  const videoJsOptions: videojs.PlayerOptions = {
     autoplay: true,
     muted: false,
     loop: true,

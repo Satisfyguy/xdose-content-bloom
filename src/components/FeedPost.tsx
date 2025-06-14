@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Heart, Bookmark } from "lucide-react"; // Suppression de MessageSquare et Share
 import VideoPlayer from './VideoPlayer';
-import type { PlayerOptions } from 'video.js';
+import videojs from 'video.js';
 
 // Interface Post mise à jour
 interface Post {
@@ -52,7 +53,7 @@ const FeedPost = ({ post, variant, onToggleBookmark, onPostClick }: FeedPostProp
   const actionButtonSpace = variant === 'large' ? 'space-x-4' : 'space-x-3';
   const textClass = variant === 'large' ? 'text-sm' : 'text-xs';
 
-  const videoJsOptions = useMemo((): PlayerOptions => ({
+  const videoJsOptions = useMemo((): videojs.PlayerOptions => ({
     autoplay: false,
     muted: true,
     loop: false,
@@ -72,7 +73,7 @@ const FeedPost = ({ post, variant, onToggleBookmark, onPostClick }: FeedPostProp
         className={`w-full ${imageAspectRatio} rounded-xl bg-gray-200 dark:bg-gray-700 cursor-pointer hover:opacity-90 transition-opacity overflow-hidden`}
         onClick={handlePostClick}
       >
-        <VideoPlayer options={videoJsOptions} isPlaying={false} className="w-full h-full object-cover" />
+        <VideoPlayer options={videoJsOptions} isPlaying={false} className="w-full h-full" />
       </div>
       <div className="mt-2 px-1">
         {variant === 'large' ? (
