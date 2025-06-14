@@ -1,9 +1,12 @@
 {
-  "buildCommand": "prisma generate && npm run build",
-  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install && npx prisma generate",
   "framework": "vite",
   "outputDirectory": "dist",
-  "env": {
-    "DATABASE_URL": "@database_url"
+  "functions": {
+    "api/**/*.ts": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
   }
 } 

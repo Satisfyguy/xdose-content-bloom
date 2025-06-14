@@ -1,5 +1,6 @@
 // src/api/auth/index.ts
-// Point d'entrée pour les routes d'authentification
+// Ce fichier ne sera plus utilisé comme point d'entrée unique.
+// Les handlers sont déplacés dans login.ts et register.ts
 
 import prisma from '../../lib/prisma';
 import bcrypt from 'bcryptjs';

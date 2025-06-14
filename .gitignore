@@ -26,3 +26,4 @@ dist-ssr
 # Ajout d'un script pour automatiser les commandes git
 scripts/
   git-push.sh
+.vercel

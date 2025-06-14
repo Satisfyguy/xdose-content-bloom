@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Home, Search, Plus, User } from "lucide-react"; // Heart icon removed
@@ -9,7 +8,7 @@ const NavigationBar = () => {
   
   const getIconClasses = (path: string) => {
     const isActive = location.pathname === path;
-    if (path === '/') { // Home icon specific active color
+    if (path === '/home') { // Home icon specific active color
       return isActive ? 'text-red-500' : 'text-gray-500 dark:text-gray-400';
     }
     return isActive ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'; // Standard active/inactive
@@ -19,8 +18,8 @@ const NavigationBar = () => {
     <nav className="fixed bottom-0 left-0 right-0 z-50">
       <div className="max-w-md mx-auto bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-t border-gray-200/20 dark:border-gray-700/20">
         <div className="flex items-center justify-around py-2 px-6">
-          <Link to="/">
-            <Button variant="ghost" size="sm" className={`p-3 ${getIconClasses('/')}`}>
+          <Link to="/home">
+            <Button variant="ghost" size="sm" className={`p-3 ${getIconClasses('/home')}`}>
               <Home className="w-6 h-6" />
             </Button>
           </Link>

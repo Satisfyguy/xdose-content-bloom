@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -13,12 +12,12 @@ const Auth = () => {
   // Rediriger si déjà connecté
   React.useEffect(() => {
     if (user) {
-      navigate('/');
+      navigate('/home');
     }
   }, [user, navigate]);
 
   const handleAuthSuccess = () => {
-    navigate('/');
+    navigate('/home');
   };
 
   return (

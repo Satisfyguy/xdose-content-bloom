@@ -38,6 +38,8 @@ model Video {
   muxAssetId     String    @unique
   muxPlaybackId  String
   tier           Tier      @default(FREE)
+  status         VideoStatus @default(PROCESSING)
+  error          String?
   tags           String[]
   likes          Int       @default(0)
   views          Int       @default(0)
@@ -94,4 +96,10 @@ enum Tier {
   FAN_ACCESS
   SUPPORTER_PLUS
   VIP
+}
+
+enum VideoStatus {
+  PROCESSING
+  READY
+  ERROR
 }

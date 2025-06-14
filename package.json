@@ -2,12 +2,12 @@
   "name": "vite_react_shadcn_ts",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "build:dev": "vite build --mode development",
-    "lint": "eslint .",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "push": "bash scripts/git-push.sh"
   },
@@ -45,6 +45,7 @@
     "@tanstack/react-query": "^5.56.2",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/video.js": "^7.3.58",
+    "@vercel/node": "^5.2.2",
     "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
