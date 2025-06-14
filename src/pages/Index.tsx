@@ -3,17 +3,18 @@ import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import StoryViewer from "@/components/StoryViewer";
+// StoryViewer import removed
 import FeedPost from "@/components/FeedPost";
 import NavigationBar from "@/components/NavigationBar";
 
 const Index = () => {
-  const stories = [
-    { id: 1, creator: "Emma", avatar: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png", hasNew: true },
-    { id: 2, creator: "Alex Rivera", avatar: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", hasNew: true },
-    { id: 3, creator: "Emily Johnson", avatar: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", hasNew: false },
-    { id: 4, creator: "Daniel Lee", avatar: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", hasNew: true },
-  ];
+  // stories data removed
+  // const stories = [
+  //   { id: 1, creator: "Emma", avatar: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png", hasNew: true },
+  //   { id: 2, creator: "Alex Rivera", avatar: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", hasNew: true },
+  //   { id: 3, creator: "Emily Johnson", avatar: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", hasNew: false },
+  //   { id: 4, creator: "Daniel Lee", avatar: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", hasNew: true },
+  // ];
 
   const posts = [
     {
@@ -57,13 +58,15 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="max-w-md mx-auto">
-        {/* Stories Section */}
+        {/* Stories Section Removed */}
+        {/* 
         <div className="px-6 py-4">
           <StoryViewer stories={stories} />
-        </div>
+        </div> 
+        */}
 
         {/* Feed */}
-        <div className="space-y-6">
+        <div className="space-y-6 px-6 py-4"> {/* Added padding here to maintain visual consistency after removing stories section */}
           {posts.map((post) => (
             <FeedPost key={post.id} post={post} />
           ))}
@@ -80,3 +83,4 @@ const Index = () => {
 };
 
 export default Index;
+
