@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-// StoryViewer import removed
+import { XDoseLogo } from "@/components/XDoseLogo"; // Importation du nouveau logo
 import FeedPost from "@/components/FeedPost";
 import NavigationBar from "@/components/NavigationBar";
 
@@ -46,9 +45,7 @@ const Index = () => {
       {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-b border-gray-200/20 dark:border-gray-700/20">
         <div className="max-w-md mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-            XDose
-          </div>
+          <XDoseLogo size="sm" animated={true} /> {/* Utilisation du composant logo */}
           <div className="flex items-center space-x-4">
             <Button variant="ghost" size="sm">Messages</Button>
             <Button variant="ghost" size="sm">Search</Button>
@@ -83,4 +80,3 @@ const Index = () => {
 };
 
 export default Index;
-
