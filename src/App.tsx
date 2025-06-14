@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import CreatorProfile from "./pages/CreatorProfile";
 import Studio from "./pages/Studio";
 import Discover from "./pages/Discover";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
