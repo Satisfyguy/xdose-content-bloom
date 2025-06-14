@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Heart, X, Bookmark } from "lucide-react"; // Suppression de MessageSquare et Share
+import VideoPlayer from './VideoPlayer';
 
 // Interface Post mise à jour
 interface Post {
@@ -47,6 +48,17 @@ const PostDetailModal = ({ post, isOpen, onClose, onToggleBookmark }: PostDetail
     e.stopPropagation();
     onToggleBookmark(post.id);
   };
+  
+  const videoJsOptions = useMemo(() => ({
+    autoplay: true,
+    loop: true,
+    controls: true,
+    fluid: true,
+    sources: [{
+        src: post.content,
+        type: 'video/mp4'
+    }]
+  }), [post.content]);
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -70,14 +82,7 @@ const PostDetailModal = ({ post, isOpen, onClose, onToggleBookmark }: PostDetail
         </DialogHeader>
         
         <div className="w-full aspect-video bg-gray-200 dark:bg-gray-800">
-            <video 
-              src={post.content} 
-              aria-label={`Post by ${post.creator}`} 
-              autoPlay
-              loop
-              controls
-              className="w-full h-full object-contain" 
-            />
+            <VideoPlayer options={videoJsOptions} className="w-full h-full" />
         </div>
 
         <div className="p-4 space-y-3">

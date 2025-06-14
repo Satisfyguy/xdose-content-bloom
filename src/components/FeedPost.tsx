@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Heart, Bookmark } from "lucide-react"; // Suppression de MessageSquare et Share
+import VideoPlayer from './VideoPlayer';
 
 // Interface Post mise à jour
 interface Post {
@@ -46,19 +47,28 @@ const FeedPost = ({ post, variant, onPostClick, onToggleBookmark }: FeedPostProp
   const actionButtonSpace = variant === 'large' ? 'space-x-4' : 'space-x-3';
   const textClass = variant === 'large' ? 'text-sm' : 'text-xs';
 
+  const videoJsOptions = useMemo(() => ({
+    autoplay: true,
+    muted: true,
+    loop: true,
+    playsinline: true,
+    controls: false,
+    preload: 'metadata',
+    fluid: true,
+    sources: [{
+      src: post.content,
+      type: 'video/mp4'
+    }]
+  }), [post.content]);
+
   return (
     <div className="w-full">
-      <video 
-        src={post.content} 
-        aria-label={`Post by ${post.creator}`} 
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        className={`w-full ${imageAspectRatio} object-cover rounded-xl bg-gray-200 dark:bg-gray-700 cursor-pointer hover:opacity-90 transition-opacity`}
+      <div
+        className={`w-full ${imageAspectRatio} rounded-xl bg-gray-200 dark:bg-gray-700 cursor-pointer hover:opacity-90 transition-opacity overflow-hidden`}
         onClick={() => onPostClick(post)}
-      />
+      >
+        <VideoPlayer options={videoJsOptions} className="w-full h-full object-cover" />
+      </div>
       <div className="mt-2 px-1">
         {variant === 'large' ? (
           <>
