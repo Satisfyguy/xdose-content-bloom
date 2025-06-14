@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
-import { User } from "lucide-react";
+import { User, ListFilter } from "lucide-react"; // Ajout de ListFilter pour l'icône du tri
 import FeedPost from "@/components/FeedPost";
 import NavigationBar from "@/components/NavigationBar";
 import PostDetailModal from "@/components/PostDetailModal";
@@ -9,19 +9,26 @@ import AnimatedHeaderText from "@/components/AnimatedHeaderText";
 import { Link } from "react-router-dom";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"; // Import du composant Select
 
 // Définition de l'interface Post (mise à jour avec isBookmarked)
 interface Post {
   id: number;
   creator: string;
   avatar: string;
-  timeAgo: string;
-  content: string;
+  timeAgo: string; // Pourrait être remplacé par un vrai timestamp pour un meilleur tri par date
+  content: string; // URL de la vidéo
   likes: number;
   caption: string;
   isSubscribed: boolean;
   isPremium: boolean;
-  isBookmarked: boolean; // Ajout du champ pour les favoris
+  isBookmarked: boolean;
 }
 
 // Étendre la liste de posts pour simuler plus de données (mise à jour avec isBookmarked)
@@ -38,6 +45,7 @@ const initialPostsData: Post[] = [
 ];
 
 const POSTS_PER_LOAD = 3; 
+type SortOption = "recent" | "popular";
 
 const Index = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -48,6 +56,7 @@ const Index = () => {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showOnlyBookmarked, setShowOnlyBookmarked] = useState(false);
+  const [sortOption, setSortOption] = useState<SortOption>("recent"); // État pour l'option de tri
 
   const observer = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useCallback((node: HTMLDivElement | null) => {
@@ -62,25 +71,57 @@ const Index = () => {
   }, [isLoading, hasMore]);
 
   useEffect(() => {
+    // Réinitialiser la page et les posts lors du changement de filtre ou de tri
+    setPosts([]);
+    setPage(0);
+    setHasMore(true); 
+    // Le chargement initial se fera par le useEffect dépendant de 'page'
+  }, [showOnlyBookmarked, sortOption]);
+
+
+  useEffect(() => {
     setIsLoading(true);
-    const startIndex = page * POSTS_PER_LOAD;
-    const endIndex = startIndex + POSTS_PER_LOAD;
     
+    // Simulation d'un appel API
     setTimeout(() => {
-      const newPosts = initialPostsData.slice(startIndex, endIndex);
+      let processedData = [...initialPostsData];
+
+      // 1. Filtrer par favoris si activé
+      if (showOnlyBookmarked) {
+        processedData = processedData.filter(p => p.isBookmarked);
+      }
+
+      // 2. Trier les données
+      if (sortOption === "recent") {
+        // Simule le tri par date en triant par ID décroissant (supposant que les ID plus élevés sont plus récents)
+        processedData.sort((a, b) => b.id - a.id);
+      } else if (sortOption === "popular") {
+        processedData.sort((a, b) => b.likes - a.likes);
+      }
+      
+      const startIndex = page * POSTS_PER_LOAD;
+      const endIndex = startIndex + POSTS_PER_LOAD;
+      const newPosts = processedData.slice(startIndex, endIndex);
+      
       if (page === 0) { 
         setPosts(newPosts);
       } else { 
         setPosts(prevPosts => [...prevPosts, ...newPosts]);
       }
       
-      setHasMore(endIndex < initialPostsData.length);
+      setHasMore(endIndex < processedData.length);
       setIsLoading(false);
     }, 1000); 
-  }, [page]);
+  }, [page, showOnlyBookmarked, sortOption]); // Ajout de showOnlyBookmarked et sortOption aux dépendances
 
   // Fonction pour mettre à jour l'état de favori d'un post
   const handleToggleBookmark = (postId: number) => {
+    // Mettre à jour initialPostsData pour simuler une source de données persistante
+    const postIndexInInitialData = initialPostsData.findIndex(p => p.id === postId);
+    if (postIndexInInitialData !== -1) {
+        initialPostsData[postIndexInInitialData].isBookmarked = !initialPostsData[postIndexInInitialData].isBookmarked;
+    }
+
     setPosts(prevPosts =>
       prevPosts.map(p =>
         p.id === postId ? { ...p, isBookmarked: !p.isBookmarked } : p
@@ -89,10 +130,12 @@ const Index = () => {
     if (selectedPost && selectedPost.id === postId) {
         setSelectedPost(prevSelectedPost => prevSelectedPost ? {...prevSelectedPost, isBookmarked: !prevSelectedPost.isBookmarked} : null);
     }
+    // Si on filtre par favoris, et qu'on retire un favori, il faut potentiellement le retirer de la liste affichée
+    // Cela est géré par la réinitialisation et le rechargement dans le useEffect dépendant de showOnlyBookmarked
   };
 
-  // Filtrer les posts si l'option est activée
-  const displayedPosts = showOnlyBookmarked ? posts.filter(p => p.isBookmarked) : posts;
+  // Les posts affichés sont maintenant directement 'posts' car le filtrage et le tri sont faits en amont.
+  const displayedPosts = posts;
 
   const mainPost = displayedPosts.length > 0 ? displayedPosts[0] : null;
   const smallPosts = displayedPosts.slice(1);
@@ -109,9 +152,28 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
-      <header className="max-w-md mx-auto px-4 sm:px-6 py-6 flex items-center justify-between">
-        <AnimatedHeaderText text="Feed" />
-        <div className="flex items-center space-x-4">
+      <header className="max-w-md mx-auto px-4 sm:px-6 py-6">
+        <div className="flex items-center justify-between mb-4">
+          <AnimatedHeaderText text="Feed" />
+          <Link to="/profile">
+            <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400">
+              <User className="w-6 h-6" />
+            </Button>
+          </Link>
+        </div>
+        <div className="flex items-center justify-between space-x-4">
+          <div className="flex items-center space-x-2">
+            <ListFilter className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+            <Select value={sortOption} onValueChange={(value) => setSortOption(value as SortOption)}>
+              <SelectTrigger className="w-[180px] bg-transparent border-gray-300 dark:border-gray-700 text-sm">
+                <SelectValue placeholder="Trier par..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="recent">Plus Récent</SelectItem>
+                <SelectItem value="popular">Plus Populaire</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <div className="flex items-center space-x-2">
             <Switch
               id="bookmarks-filter"
@@ -123,17 +185,12 @@ const Index = () => {
               Favoris
             </Label>
           </div>
-          <Link to="/profile">
-            <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400">
-              <User className="w-6 h-6" />
-            </Button>
-          </Link>
         </div>
       </header>
 
       <main className="max-w-md mx-auto px-4 sm:px-6 pb-24">
         {/* Skeletons pour le chargement initial */}
-        {page === 0 && isLoading && !mainPost && (
+        {isLoading && posts.length === 0 && ( // Modifié pour s'afficher si posts est vide et isLoading
             <>
                 <FeedPostSkeleton variant="large" />
                 <div className="grid grid-cols-2 gap-4 mt-6">
@@ -156,7 +213,7 @@ const Index = () => {
         )}
 
         {/* Affichage des posts plus petits */}
-        {(smallPosts.length > 0 || (isLoading && page > 0 && !showOnlyBookmarked)) && (
+        {(smallPosts.length > 0 || (isLoading && posts.length > 0)) && ( // Modifié pour gérer le chargement pendant scroll
           <div className="grid grid-cols-2 gap-4">
             {smallPosts.map((post) => (
               <FeedPost 
@@ -167,15 +224,8 @@ const Index = () => {
                 onToggleBookmark={handleToggleBookmark}
               />
             ))}
-            {/* Skeletons pour le chargement infini si pas en mode filtre favoris uniquement */}
-            {isLoading && page > 0 && !showOnlyBookmarked && ( 
-              <>
-                <FeedPostSkeleton variant="small" />
-                <FeedPostSkeleton variant="small" />
-              </>
-            )}
-             {/* Skeletons pour le chargement infini si en mode filtre favoris et on attend des posts */}
-             {isLoading && page > 0 && showOnlyBookmarked && displayedPosts.length < posts.length && (
+            {/* Skeletons pour le chargement infini */}
+            {isLoading && posts.length > 0 && ( 
               <>
                 <FeedPostSkeleton variant="small" />
                 <FeedPostSkeleton variant="small" />
@@ -188,6 +238,7 @@ const Index = () => {
         {!isLoading && displayedPosts.length === 0 && (
            <p className="text-center text-gray-500 dark:text-gray-400 mt-10">
             {showOnlyBookmarked ? "Aucun post en favori." : "Aucun post pour le moment."}
+            {sortOption === "popular" && !showOnlyBookmarked && " Triez par popularité."}
           </p>
         )}
 
