@@ -1,14 +1,27 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { User } from "lucide-react"; // XDoseLogo import removed, User icon imported
+import { User } from "lucide-react";
 import FeedPost from "@/components/FeedPost";
 import NavigationBar from "@/components/NavigationBar";
-import { Link } from "react-router-dom"; // Link imported for profile icon
+import PostDetailModal from "@/components/PostDetailModal";
+import { Link } from "react-router-dom";
+
+// Définition de l'interface Post (idéalement, à partir d'un fichier de types partagé)
+interface Post {
+  id: number;
+  creator: string;
+  avatar: string;
+  timeAgo: string;
+  content: string;
+  likes: number;
+  caption: string;
+  isSubscribed: boolean;
+  isPremium: boolean;
+}
 
 const Index = () => {
   // Updated posts data to better match the visual design for three posts
-  const posts = [
+  const posts: Post[] = [
     {
       id: 1,
       creator: "Jane Cooper",
@@ -47,6 +60,20 @@ const Index = () => {
   const mainPost = posts[0];
   const smallPosts = posts.slice(1, 3); // Ensure we have posts for the grid
 
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = (post: Post) => {
+    setSelectedPost(post);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    // Optionnel: setSelectedPost(null) après un délai pour l'animation de fermeture du modal
+    setSelectedPost(null);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       {/* Header */}
@@ -64,7 +91,8 @@ const Index = () => {
         {/* Main Post */}
         {mainPost && (
           <div className="mb-6">
-            <FeedPost post={mainPost} variant="large" />
+            {/* Passer onPostClick à FeedPost */}
+            <FeedPost post={mainPost} variant="large" onPostClick={handleOpenModal} />
           </div>
         )}
 
@@ -72,7 +100,8 @@ const Index = () => {
         {smallPosts.length > 0 && (
           <div className="grid grid-cols-2 gap-4">
             {smallPosts.map((post) => (
-              <FeedPost key={post.id} post={post} variant="small" />
+              // Passer onPostClick à FeedPost
+              <FeedPost key={post.id} post={post} variant="small" onPostClick={handleOpenModal} />
             ))}
           </div>
         )}
@@ -85,6 +114,16 @@ const Index = () => {
 
       {/* Bottom Navigation */}
       <NavigationBar />
+
+      {/* Post Detail Modal */}
+      {/* S'assurer que selectedPost n'est pas null avant de rendre le modal peut éviter des erreurs */}
+      {selectedPost && (
+        <PostDetailModal
+          post={selectedPost}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 };
