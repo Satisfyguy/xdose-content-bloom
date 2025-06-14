@@ -1,7 +1,6 @@
 
 import React, { useMemo } from 'react';
 import VideoPlayer from './VideoPlayer';
-import videojs from 'video.js';
 
 interface VideoPostProps {
   videoUrl: string;
@@ -18,7 +17,9 @@ const VideoPost: React.FC<VideoPostProps> = ({ videoUrl, alt, className, onClick
     playsinline: true,
     controls: false,
     preload: 'metadata',
-    fluid: true,
+    fluid: false,
+    responsive: false,
+    fill: true,
     sources: [{
       src: videoUrl,
       type: 'video/mp4'
@@ -30,7 +31,7 @@ const VideoPost: React.FC<VideoPostProps> = ({ videoUrl, alt, className, onClick
       className={`aspect-square bg-neutral-200 dark:bg-neutral-800 rounded-lg overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-300 ${className}`}
       onClick={onClick}
     >
-      <VideoPlayer options={videoJsOptions} isPlaying={false} className="w-full h-full" />
+      <VideoPlayer options={videoJsOptions} isPlaying={false} className="w-full h-full object-cover" />
     </div>
   );
 };

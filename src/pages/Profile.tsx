@@ -87,7 +87,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-neutral-100 dark:bg-neutral-950 text-neutral-800 dark:text-neutral-200 flex flex-col">
-      <main className="flex-grow max-w-3xl mx-auto pb-24 w-full">
+      <main className="flex-grow max-w-4xl mx-auto pb-24 w-full">
         {/* Cover Image */}
         <div className="h-48 md:h-64 bg-neutral-300 dark:bg-neutral-700 relative mb-[-64px] md:mb-[-80px]">
           {user.coverImage && (
@@ -144,16 +144,17 @@ const Profile = () => {
           </div>
 
           {/* Videos Grid */}
-          <div>
+          <div className="w-full">
             <h2 className="text-2xl font-semibold mb-6 text-center">Videos</h2>
             {videoPosts.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 md:gap-2 w-full">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 w-full max-w-3xl mx-auto">
                 {videoPosts.map((post) => (
                   <VideoPost
                     key={post.id}
                     videoUrl={post.content}
                     alt={`Video ${post.id}`}
                     onClick={() => handlePostClick(post)}
+                    className="w-full"
                   />
                 ))}
               </div>
