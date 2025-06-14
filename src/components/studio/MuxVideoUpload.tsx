@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Video, Upload, Play, Pause, X, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 import { useVideoUpload } from '@/hooks/useVideoUpload';
-import { getPlaybackUrl } from '@/services/muxService';
+import { getPlaybackUrl } from '@/services/mockMuxService';
 
 interface MuxVideoUploadProps {
   selectedVideo: File | null;
