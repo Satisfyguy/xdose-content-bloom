@@ -1,12 +1,9 @@
-
 import React, { useEffect, useRef } from 'react';
 import videojs from 'video.js';
-import type Player from 'video.js/dist/types/player';
-import type PlayerOptions from 'video.js/dist/types/player';
-
+import type { Player } from 'video.js';
 
 export interface VideoPlayerProps {
-  options: PlayerOptions;
+  options: videojs.PlayerOptions;
   onReady?: (player: Player) => void;
   className?: string;
   isPlaying?: boolean;
