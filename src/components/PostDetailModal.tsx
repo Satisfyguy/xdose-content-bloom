@@ -1,9 +1,8 @@
-
 import React, { useEffect } from 'react';
 import VideoPlayer from './VideoPlayer';
 import type { Post } from '@/types';
 import { X } from 'lucide-react';
-import type PlayerOptions from 'video.js/dist/types/player';
+import type { PlayerOptions } from 'video.js/dist/types/player';
 
 interface PostDetailModalProps {
   post: Post;

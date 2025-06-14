@@ -1,8 +1,7 @@
-
 import React, { useEffect, useRef } from 'react';
 import videojs from 'video.js';
 import type Player from 'video.js/dist/types/player';
-import type PlayerOptions from 'video.js/dist/types/player';
+import type { PlayerOptions } from 'video.js/dist/types/player';
 
 
 export interface VideoPlayerProps {
