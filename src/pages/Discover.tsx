@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, TrendingUp, Sparkles, Film, PlaySquare, Lightbulb, Video, Filter, ListVideo, Clock, Zap } from "lucide-react";
+import { Search, TrendingUp, Sparkles, Film, PlaySquare, Lightbulb, Video, Filter, ListVideo, Clock, Zap, Clapperboard, Flame } from "lucide-react";
 import NavigationBar from "@/components/NavigationBar";
 import {
   Select,
@@ -18,22 +18,23 @@ interface ContentSuggestion {
   thumbnailUrl: string;
   videoUrl: string;
   title?: string;
-  category?: string; // Added for filtering
-  duration?: number; // Added for filtering (in minutes)
-  uploadDate?: string; // Added for filtering
+  category?: string;
+  duration?: number; 
+  uploadDate?: string; 
 }
 
 const Discover = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [hoveredVideoId, setHoveredVideoId] = useState<string | null>(null);
+  const [hoveredNewVideoId, setHoveredNewVideoId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedDuration, setSelectedDuration] = useState<string>("any");
   const [sortBy, setSortBy] = useState<string>("relevance");
 
   const trendingTopics = [
-    { name: "Short Films", icon: Film, count: "8.2K videos", color: "from-blue-500 to-cyan-500" },
-    { name: "Vlogs", icon: PlaySquare, count: "12.1K videos", color: "from-purple-500 to-pink-500" },
-    { name: "Tutorials", icon: Lightbulb, count: "9.5K videos", color: "from-orange-500 to-red-500" },
+    { name: "Histoires Érotiques", icon: Film, count: "7.5K videos", color: "from-red-500 to-pink-500" },
+    { name: "Performances Live", icon: PlaySquare, count: "15.2K videos", color: "from-purple-500 to-indigo-500" },
+    { name: "Cosplay Sensuel", icon: Lightbulb, count: "9.8K videos", color: "from-yellow-500 to-orange-500" },
   ];
 
   const featuredCreators = [
@@ -60,32 +61,41 @@ const Discover = () => {
     }
   ];
 
-  // Placeholder video - replace with actual video URLs or a dynamic source
   const placeholderVideoUrl = "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4";
 
   const contentSuggestions: ContentSuggestion[] = [
-    { id: "1", thumbnailUrl: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", videoUrl: placeholderVideoUrl, title: "Mountain Adventure", category: "Nature", duration: 5, uploadDate: "2025-06-10" },
-    { id: "2", thumbnailUrl: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png", videoUrl: placeholderVideoUrl, title: "City Lights", category: "Urban", duration: 3, uploadDate: "2025-06-12" },
-    { id: "3", thumbnailUrl: "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png", videoUrl: placeholderVideoUrl, title: "Forest Trail", category: "Nature", duration: 10, uploadDate: "2025-06-01" },
-    { id: "4", thumbnailUrl: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", videoUrl: placeholderVideoUrl, title: "Ocean Waves", category: "Nature", duration: 2, uploadDate: "2025-05-20" },
-    { id: "5", thumbnailUrl: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png", videoUrl: placeholderVideoUrl, title: "Desert Sunset", category: "Travel", duration: 7, uploadDate: "2025-06-14" },
-    { id: "6", thumbnailUrl: "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png", videoUrl: placeholderVideoUrl, title: "Abstract Art", category: "Art", duration: 1, uploadDate: "2025-06-13" }
+    { id: "1", thumbnailUrl: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", videoUrl: placeholderVideoUrl, title: "Aventure Passionnée", category: "Amateur", duration: 5, uploadDate: "2025-06-10" },
+    { id: "2", thumbnailUrl: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png", videoUrl: placeholderVideoUrl, title: "Nuits Citadines", category: "Professionnel", duration: 3, uploadDate: "2025-06-12" },
+    { id: "3", thumbnailUrl: "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png", videoUrl: placeholderVideoUrl, title: "Sentier Secret", category: "Fétiche", duration: 10, uploadDate: "2025-06-01" },
+    { id: "4", thumbnailUrl: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", videoUrl: placeholderVideoUrl, title: "Vagues de Désir", category: "Couple", duration: 2, uploadDate: "2025-05-20" },
+    { id: "5", thumbnailUrl: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png", videoUrl: placeholderVideoUrl, title: "Crépuscule Ardent", category: "Solo", duration: 7, uploadDate: "2025-06-14" },
+    { id: "6", thumbnailUrl: "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png", videoUrl: placeholderVideoUrl, title: "Art Abstrait Charnel", category: "Artistique", duration: 1, uploadDate: "2025-06-13" },
+    { id: "7", thumbnailUrl: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png", videoUrl: placeholderVideoUrl, title: "Making Of: Scène X", category: "Making Of", duration: 12, uploadDate: "2025-06-15" },
+    { id: "8", thumbnailUrl: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", videoUrl: placeholderVideoUrl, title: "Leçon de Séduction", category: "Éducatif", duration: 8, uploadDate: "2025-06-16" }
   ];
   
-  const videoCategories = ["all", "Nature", "Urban", "Travel", "Art", "Tutorials", "Vlogs", "Short Films"];
+  const videoCategories = [
+    "all", "Amateur", "Professionnel", "Solo", "Couple", "Groupe", 
+    "Fétiche", "Cosplay", "Histoires Érotiques", "Performances Live", 
+    "Artistique", "Éducatif", "Making Of", "VR"
+  ];
+
   const videoDurations = [
-    { value: "any", label: "Any Duration" },
-    { value: "short", label: "Short (< 5 min)" },
-    { value: "medium", label: "Medium (5-15 min)" },
-    { value: "long", label: "Long (> 15 min)" },
+    { value: "any", label: "Toute Durée" },
+    { value: "short", label: "Courte (< 5 min)" },
+    { value: "medium", label: "Moyenne (5-15 min)" },
+    { value: "long", label: "Longue (> 15 min)" },
   ];
   const sortOptions = [
     { value: "relevance", label: "Relevance" },
-    { value: "newest", label: "Newest" },
-    { value: "popular", label: "Popular" },
+    { value: "newest", label: "Nouveautés" },
+    { value: "popular", label: "Popularité" },
   ];
 
-  // Basic filtering logic (can be expanded)
+  const latestUploads = [...contentSuggestions]
+    .sort((a, b) => new Date(b.uploadDate ?? 0).getTime() - new Date(a.uploadDate ?? 0).getTime())
+    .slice(0, 4);
+
   const filteredContentSuggestions = contentSuggestions.filter(content => {
     const matchesCategory = selectedCategory === "all" || content.category === selectedCategory;
     const matchesDuration = selectedDuration === "any" || 
@@ -108,16 +118,17 @@ const Discover = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
       {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-b border-gray-200/20 dark:border-gray-700/20">
+        {/* ... keep existing code (Header content: Discover title, Search Bar) */}
         <div className="max-w-md mx-auto px-6 py-4">
           <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4">
-            Discover
+            Découvrir
           </div>
           
           {/* Search Bar */}
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <Input
-              placeholder="Search creators, videos, topics..."
+              placeholder="Chercher créateurs, vidéos, thèmes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 bg-white/50 backdrop-blur-sm border-gray-200/20"
@@ -127,17 +138,17 @@ const Discover = () => {
           {/* Filter Bar */}
           <div className="flex items-center space-x-2 mb-2 text-sm">
             <Filter className="w-4 h-4 text-gray-500" />
-            <span className="font-medium text-gray-700 dark:text-gray-300">Filters:</span>
+            <span className="font-medium text-gray-700 dark:text-gray-300">Filtres:</span>
           </div>
           <div className="grid grid-cols-3 gap-2 pb-3">
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger className="text-xs h-9">
-                <SelectValue placeholder="Category" />
+                <SelectValue placeholder="Catégorie" />
               </SelectTrigger>
               <SelectContent>
                 {videoCategories.map(category => (
                   <SelectItem key={category} value={category} className="text-xs">
-                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                    {category === "all" ? "Toutes" : category.charAt(0).toUpperCase() + category.slice(1)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -145,7 +156,7 @@ const Discover = () => {
 
             <Select value={selectedDuration} onValueChange={setSelectedDuration}>
               <SelectTrigger className="text-xs h-9">
-                <SelectValue placeholder="Duration" />
+                <SelectValue placeholder="Durée" />
               </SelectTrigger>
               <SelectContent>
                 {videoDurations.map(duration => (
@@ -158,7 +169,7 @@ const Discover = () => {
 
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="text-xs h-9">
-                <SelectValue placeholder="Sort by" />
+                <SelectValue placeholder="Trier par" />
               </SelectTrigger>
               <SelectContent>
                 {sortOptions.map(option => (
@@ -172,12 +183,12 @@ const Discover = () => {
         </div>
       </header>
 
-      <main className="max-w-md mx-auto p-6 space-y-6">
+      <main className="max-w-md mx-auto p-6 space-y-8">
         {/* Trending Topics */}
         <div>
           <div className="flex items-center space-x-2 mb-4">
             <TrendingUp className="w-5 h-5 text-purple-600" />
-            <h2 className="text-lg font-semibold">Trending Now</h2>
+            <h2 className="text-lg font-semibold">Tendances Actuelles</h2>
           </div>
           <div className="space-y-3">
             {trendingTopics.map((topic, index) => {
@@ -194,7 +205,7 @@ const Discover = () => {
                         <p className="text-sm text-gray-600 dark:text-gray-400">{topic.count}</p> 
                       </div>
                       <Badge variant="secondary" className="bg-purple-100 text-purple-800">
-                        Hot
+                        Chaud
                       </Badge>
                     </div>
                   </CardContent>
@@ -208,7 +219,7 @@ const Discover = () => {
         <div>
           <div className="flex items-center space-x-2 mb-4">
             <Sparkles className="w-5 h-5 text-pink-600" />
-            <h2 className="text-lg font-semibold">Featured Creators</h2>
+            <h2 className="text-lg font-semibold">Créateurs à la Une</h2>
           </div>
           <div className="space-y-3">
             {featuredCreators.map((creator, index) => (
@@ -233,7 +244,7 @@ const Discover = () => {
                         size="sm"
                         className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
                       >
-                        Follow
+                        Suivre
                       </Button>
                     </div>
                   </div>
@@ -243,11 +254,63 @@ const Discover = () => {
           </div>
         </div>
 
-        {/* AI Personalized Content - Updated for Video Previews */}
+        {/* Nouveautés (Latest Uploads) Section */}
         <div>
           <div className="flex items-center space-x-2 mb-4">
-            <Video className="w-5 h-5 text-teal-500" /> {/* Using Video icon */}
-            <h2 className="text-lg font-semibold">For You</h2>
+            <Clock className="w-5 h-5 text-green-600" />
+            <h2 className="text-lg font-semibold">Nouveautés</h2>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {latestUploads.map((content) => (
+              <div 
+                key={`new-${content.id}`} 
+                className="aspect-square relative group cursor-pointer rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700"
+                onMouseEnter={() => setHoveredNewVideoId(content.id)}
+                onMouseLeave={() => setHoveredNewVideoId(null)}
+              >
+                {hoveredNewVideoId === content.id ? (
+                  <video
+                    src={content.videoUrl}
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  />
+                ) : (
+                  <img 
+                    src={content.thumbnailUrl} 
+                    alt={content.title || `Nouveauté ${content.id}`}
+                    className="w-full h-full object-cover"
+                  />
+                )}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-end p-2">
+                  {content.title && hoveredNewVideoId !== content.id && (
+                     <p className="text-white text-xs font-medium truncate bg-black/30 px-1 py-0.5 rounded">
+                       {content.title}
+                     </p>
+                  )}
+                </div>
+                {hoveredNewVideoId !== content.id && (
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <PlaySquare className="w-8 h-8 text-white/70" />
+                  </div>
+                )}
+              </div>
+            ))}
+            {latestUploads.length === 0 && (
+              <p className="col-span-2 text-center text-gray-500 dark:text-gray-400 py-8">
+                Aucune nouvelle vidéo pour le moment.
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* AI Personalized Content - For You */}
+        <div>
+          <div className="flex items-center space-x-2 mb-4">
+            <Flame className="w-5 h-5 text-orange-500" />
+            <h2 className="text-lg font-semibold">Pour Vous</h2>
           </div>
           <div className="grid grid-cols-2 gap-3">
             {filteredContentSuggestions.map((content) => (
@@ -290,7 +353,7 @@ const Discover = () => {
             ))}
             {filteredContentSuggestions.length === 0 && (
               <p className="col-span-2 text-center text-gray-500 dark:text-gray-400 py-8">
-                No videos match your current filters. Try adjusting them!
+                Aucune vidéo ne correspond à vos filtres actuels. Essayez de les ajuster !
               </p>
             )}
           </div>
@@ -301,16 +364,16 @@ const Discover = () => {
           <CardContent className="p-4">
             <div className="flex items-center space-x-2 mb-3">
               <Sparkles className="w-5 h-5 text-blue-800" />
-              <h3 className="font-semibold text-blue-800">AI Insights</h3>
+              <h3 className="font-semibold text-blue-800">Perspectives IA</h3>
             </div>
             <div className="space-y-2 text-sm">
               <div className="bg-white/60 rounded-lg p-3">
-                <p className="font-medium">Your interests are evolving</p>
-                <p className="text-gray-600">You're exploring more nature photography lately</p>
+                <p className="font-medium">Vos intérêts évoluent</p>
+                <p className="text-gray-600">Vous explorez davantage les performances live ces derniers temps.</p>
               </div>
               <div className="bg-white/60 rounded-lg p-3">
-                <p className="font-medium">New creator recommendation</p>
-                <p className="text-gray-600">Based on your activity, you might like @nature_lens</p>
+                <p className="font-medium">Nouvelle recommandation de créateur</p>
+                <p className="text-gray-600">Basé sur votre activité, vous pourriez aimer @sensual_arts</p>
               </div>
             </div>
           </CardContent>
