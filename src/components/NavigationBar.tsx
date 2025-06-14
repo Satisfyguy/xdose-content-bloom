@@ -1,14 +1,18 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Home, Search, Plus, Heart, User } from "lucide-react";
+import { Home, Search, Plus, User } from "lucide-react"; // Heart icon removed
 import { Link, useLocation } from "react-router-dom";
 
 const NavigationBar = () => {
   const location = useLocation();
   
-  const isActive = (path: string) => {
-    return location.pathname === path;
+  const getIconClasses = (path: string) => {
+    const isActive = location.pathname === path;
+    if (path === '/') { // Home icon specific active color
+      return isActive ? 'text-red-500' : 'text-gray-500 dark:text-gray-400';
+    }
+    return isActive ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'; // Standard active/inactive
   };
 
   return (
@@ -16,29 +20,28 @@ const NavigationBar = () => {
       <div className="max-w-md mx-auto bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-t border-gray-200/20 dark:border-gray-700/20">
         <div className="flex items-center justify-around py-2 px-6">
           <Link to="/">
-            <Button variant="ghost" size="sm" className={`p-3 ${isActive('/') ? 'text-purple-600' : ''}`}>
+            <Button variant="ghost" size="sm" className={`p-3 ${getIconClasses('/')}`}>
               <Home className="w-6 h-6" />
             </Button>
           </Link>
           <Link to="/discover">
-            <Button variant="ghost" size="sm" className={`p-3 ${isActive('/discover') ? 'text-purple-600' : ''}`}>
+            <Button variant="ghost" size="sm" className={`p-3 ${getIconClasses('/discover')}`}>
               <Search className="w-6 h-6" />
             </Button>
           </Link>
           <Link to="/studio">
+            {/* Simplified Plus button styling */}
             <Button 
               variant="ghost" 
               size="sm" 
-              className="p-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full hover:from-purple-600 hover:to-blue-600"
+              className={`p-3 ${getIconClasses('/studio')} text-gray-500 dark:text-gray-400`}
             >
               <Plus className="w-6 h-6" />
             </Button>
           </Link>
-          <Button variant="ghost" size="sm" className="p-3">
-            <Heart className="w-6 h-6" />
-          </Button>
+          {/* Heart button removed to match the design */}
           <Link to="/profile">
-            <Button variant="ghost" size="sm" className={`p-3 ${isActive('/profile') ? 'text-purple-600' : ''}`}>
+            <Button variant="ghost" size="sm" className={`p-3 ${getIconClasses('/profile')}`}>
               <User className="w-6 h-6" />
             </Button>
           </Link>

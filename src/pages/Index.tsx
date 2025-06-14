@@ -1,20 +1,13 @@
+
 import React from 'react';
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
-import { XDoseLogo } from "@/components/XDoseLogo"; // Importation du nouveau logo
+import { User } from "lucide-react"; // XDoseLogo import removed, User icon imported
 import FeedPost from "@/components/FeedPost";
 import NavigationBar from "@/components/NavigationBar";
+import { Link } from "react-router-dom"; // Link imported for profile icon
 
 const Index = () => {
-  // stories data removed
-  // const stories = [
-  //   { id: 1, creator: "Emma", avatar: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png", hasNew: true },
-  //   { id: 2, creator: "Alex Rivera", avatar: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", hasNew: true },
-  //   { id: 3, creator: "Emily Johnson", avatar: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", hasNew: false },
-  //   { id: 4, creator: "Daniel Lee", avatar: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", hasNew: true },
-  // ];
-
+  // Updated posts data to better match the visual design for three posts
   const posts = [
     {
       id: 1,
@@ -29,48 +22,65 @@ const Index = () => {
     },
     {
       id: 2,
-      creator: "Emma",
-      avatar: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png",
+      creator: "Ronald Richards",
+      avatar: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", // Example avatar
       timeAgo: "8h",
-      content: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png",
-      likes: 456,
-      caption: "Photographer and visual storyteller. I add insight to captive beauty and emotion.",
+      content: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", // Example content image
+      likes: 150,
+      caption: "Exploring geometric forms in urban landscapes.",
       isSubscribed: true,
-      isPremium: true
+      isPremium: false
+    },
+    {
+      id: 3,
+      creator: "Leslie Alexander",
+      avatar: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png", // Example avatar
+      timeAgo: "12h",
+      content: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png", // Example content image
+      likes: 98,
+      caption: "Morning coffee rituals and slow living.",
+      isSubscribed: false,
+      isPremium: true // Data point, though not explicitly styled in this simplified FeedPost
     }
   ];
 
+  const mainPost = posts[0];
+  const smallPosts = posts.slice(1, 3); // Ensure we have posts for the grid
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-b border-gray-200/20 dark:border-gray-700/20">
-        <div className="max-w-md mx-auto px-6 py-4 flex items-center justify-between">
-          <XDoseLogo size="sm" animated={true} /> {/* Utilisation du composant logo */}
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm">Messages</Button>
-            <Button variant="ghost" size="sm">Search</Button>
-          </div>
-        </div>
+      <header className="max-w-md mx-auto px-4 sm:px-6 py-6 flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Feed</h1>
+        <Link to="/profile">
+          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400">
+            <User className="w-6 h-6" />
+          </Button>
+        </Link>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-md mx-auto">
-        {/* Stories Section Removed */}
-        {/* 
-        <div className="px-6 py-4">
-          <StoryViewer stories={stories} />
-        </div> 
-        */}
+      <main className="max-w-md mx-auto px-4 sm:px-6 pb-24"> {/* Adjusted padding, pb-24 for nav bar space */}
+        {/* Main Post */}
+        {mainPost && (
+          <div className="mb-6">
+            <FeedPost post={mainPost} variant="large" />
+          </div>
+        )}
 
-        {/* Feed */}
-        <div className="space-y-6 px-6 py-4"> {/* Added padding here to maintain visual consistency after removing stories section */}
-          {posts.map((post) => (
-            <FeedPost key={post.id} post={post} />
-          ))}
-        </div>
-
-        {/* Bottom spacing for navigation */}
-        <div className="h-20"></div>
+        {/* Grid for smaller posts */}
+        {smallPosts.length > 0 && (
+          <div className="grid grid-cols-2 gap-4">
+            {smallPosts.map((post) => (
+              <FeedPost key={post.id} post={post} variant="small" />
+            ))}
+          </div>
+        )}
+        
+        {/* Fallback if no posts */}
+        {posts.length === 0 && (
+          <p className="text-center text-gray-500 dark:text-gray-400 mt-10">No posts yet.</p>
+        )}
       </main>
 
       {/* Bottom Navigation */}
