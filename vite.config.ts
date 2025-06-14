@@ -19,4 +19,12 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    exclude: ['@prisma/client'],
+  },
+  build: {
+    commonjsOptions: {
+      include: [/@prisma\/client/, /node_modules/],
+    },
+  },
 }));
