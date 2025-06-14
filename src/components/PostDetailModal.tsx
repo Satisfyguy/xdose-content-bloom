@@ -1,39 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Heart, MessageSquare, Share, X } from "lucide-react";
-// import { useToast } from "@/hooks/use-toast"; // Décommentez si vous voulez utiliser les toasts pour les actions
+import { Heart, MessageSquare, Share, X, Bookmark } from "lucide-react"; // Ajout de Bookmark
 
-// Assurez-vous que cette interface correspond à celle utilisée ailleurs (FeedPost.tsx, Index.tsx)
+// Interface Post mise à jour
 interface Post {
   id: number;
   creator: string;
   avatar: string;
   timeAgo: string;
-  content: string; // URL de l'image
+  content: string; 
   likes: number;
   caption: string;
   isSubscribed: boolean;
   isPremium: boolean;
+  isBookmarked: boolean; // Ajout de isBookmarked
 }
 
 interface PostDetailModalProps {
   post: Post | null;
   isOpen: boolean;
   onClose: () => void;
+  onToggleBookmark: (postId: number) => void; // Nouvelle prop pour gérer le favori
 }
 
-const PostDetailModal = ({ post, isOpen, onClose }: PostDetailModalProps) => {
-  // const { toast } = useToast(); // Pour les notifications toast
+const PostDetailModal = ({ post, isOpen, onClose, onToggleBookmark }: PostDetailModalProps) => {
   const [isLikedInModal, setIsLikedInModal] = useState(false);
   const [currentLikesInModal, setCurrentLikesInModal] = useState(0);
+  // L'état isBookmarked est maintenant géré par le parent (Index.tsx) via post.isBookmarked
 
   useEffect(() => {
     if (post) {
-      // Idéalement, cela devrait se synchroniser avec un état global ou l'état du FeedPost source.
-      // Pour l'instant, c'est local à l'instance du modal.
-      setIsLikedInModal(false); // Réinitialiser ou récupérer le statut "aimé" réel
+      // Pour les likes, on garde un état local au modal pour l'instant
+      // L'état initial de "aimé" pourrait être synchronisé si l'information est disponible dans `post`
+      setIsLikedInModal(false); 
       setCurrentLikesInModal(post.likes);
+      // L'état `isBookmarked` est directement lu de `post.isBookmarked`
     }
   }, [post]);
 
@@ -43,18 +45,22 @@ const PostDetailModal = ({ post, isOpen, onClose }: PostDetailModalProps) => {
     e.stopPropagation();
     setIsLikedInModal(!isLikedInModal);
     setCurrentLikesInModal(isLikedInModal ? currentLikesInModal - 1 : currentLikesInModal + 1);
+    // Idéalement, cette action de like devrait aussi être propagée vers le haut.
   };
 
   const handleCommentInModal = (e: React.MouseEvent) => {
     e.stopPropagation();
     console.log("Bouton Commenter cliqué dans le modal pour le post:", post.id);
-    // toast({ title: "Commentaires", description: "Section des commentaires à venir !" });
   };
 
   const handleShareInModal = (e: React.MouseEvent) => {
     e.stopPropagation();
     console.log("Bouton Partager cliqué dans le modal pour le post:", post.id);
-    // toast({ title: "Partager", description: "Fonctionnalité de partage à implémenter." });
+  };
+
+  const handleBookmarkInModal = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleBookmark(post.id); // Appeler la fonction passée en prop
   };
 
   return (
@@ -82,21 +88,26 @@ const PostDetailModal = ({ post, isOpen, onClose }: PostDetailModalProps) => {
             <img 
               src={post.content} 
               alt={`Post by ${post.creator}`} 
-              loading="lazy" // Added lazy loading
+              loading="lazy"
               className="w-full h-full object-contain" 
             />
         </div>
 
         <div className="p-4 space-y-3">
-          <div className="flex items-center space-x-4 text-gray-600 dark:text-gray-400">
-            <button onClick={handleLikeInModal} className="flex items-center space-x-1 focus:outline-none group">
-              <Heart className={`w-6 h-6 group-hover:text-red-400 ${isLikedInModal ? 'fill-red-500 text-red-500' : 'text-gray-600 dark:text-gray-400'}`} />
-            </button>
-            <button onClick={handleCommentInModal} className="flex items-center space-x-1 focus:outline-none group">
-              <MessageSquare className="w-6 h-6 text-gray-600 dark:text-gray-400 group-hover:text-blue-400" />
-            </button>
-            <button onClick={handleShareInModal} className="flex items-center space-x-1 focus:outline-none group">
-              <Share className="w-6 h-6 text-gray-600 dark:text-gray-400 group-hover:text-green-400" />
+          <div className="flex items-center justify-between text-gray-600 dark:text-gray-400"> {/* justify-between pour espacer les actions et le bookmark */}
+            <div className="flex items-center space-x-4"> {/* Groupe pour like, comment, share */}
+                <button onClick={handleLikeInModal} className="flex items-center space-x-1 focus:outline-none group">
+                <Heart className={`w-6 h-6 group-hover:text-red-400 ${isLikedInModal ? 'fill-red-500 text-red-500' : 'text-gray-600 dark:text-gray-400'}`} />
+                </button>
+                <button onClick={handleCommentInModal} className="flex items-center space-x-1 focus:outline-none group">
+                <MessageSquare className="w-6 h-6 text-gray-600 dark:text-gray-400 group-hover:text-blue-400" />
+                </button>
+                <button onClick={handleShareInModal} className="flex items-center space-x-1 focus:outline-none group">
+                <Share className="w-6 h-6 text-gray-600 dark:text-gray-400 group-hover:text-green-400" />
+                </button>
+            </div>
+            <button onClick={handleBookmarkInModal} className="flex items-center space-x-1 focus:outline-none group">
+                <Bookmark className={`w-6 h-6 group-hover:text-yellow-400 ${post.isBookmarked ? 'fill-yellow-500 text-yellow-500' : 'text-gray-600 dark:text-gray-400'}`} />
             </button>
           </div>
 
