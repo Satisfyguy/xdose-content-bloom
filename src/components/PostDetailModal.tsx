@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -71,10 +70,12 @@ const PostDetailModal = ({ post, isOpen, onClose, onToggleBookmark }: PostDetail
         </DialogHeader>
         
         <div className="w-full aspect-video bg-gray-200 dark:bg-gray-800">
-            <img 
+            <video 
               src={post.content} 
-              alt={`Post by ${post.creator}`} 
-              loading="lazy"
+              aria-label={`Post by ${post.creator}`} 
+              autoPlay
+              loop
+              controls
               className="w-full h-full object-contain" 
             />
         </div>

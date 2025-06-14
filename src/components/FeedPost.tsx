@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Heart, Bookmark } from "lucide-react"; // Suppression de MessageSquare et Share
 
@@ -49,10 +48,14 @@ const FeedPost = ({ post, variant, onPostClick, onToggleBookmark }: FeedPostProp
 
   return (
     <div className="w-full">
-      <img 
+      <video 
         src={post.content} 
-        alt={`Post by ${post.creator}`} 
-        loading="lazy"
+        aria-label={`Post by ${post.creator}`} 
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
         className={`w-full ${imageAspectRatio} object-cover rounded-xl bg-gray-200 dark:bg-gray-700 cursor-pointer hover:opacity-90 transition-opacity`}
         onClick={() => onPostClick(post)}
       />
