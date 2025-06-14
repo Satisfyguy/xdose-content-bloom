@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import VideoPlayer from './VideoPlayer';
 import type { Post } from '@/types';
-import videojs from 'video.js';
+import * as videojs from 'video.js';
 import { X } from 'lucide-react';
 
 interface PostDetailModalProps {

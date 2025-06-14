@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef } from 'react';
-import videojs from 'video.js';
+import * as videojs from 'video.js';
 
 export interface VideoPlayerProps {
   options: videojs.PlayerOptions;
@@ -18,7 +18,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ options, onReady, className, 
     if (videoRef.current && !playerRef.current) {
       const videoElement = videoRef.current;
 
-      playerRef.current = videojs(videoElement, options, function onPlayerReady(this: videojs.Player) {
+      playerRef.current = videojs.default(videoElement, options, function onPlayerReady(this: videojs.Player) {
         if (onReady) {
           onReady(this);
         }
