@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import NavigationBar from "@/components/NavigationBar";
 import TipButton from "@/components/TipButton";
-import SubscriptionPlan from "@/components/SubscriptionPlan";
+// Removed SubscriptionPlan import as it's no longer used directly on this page
+// import SubscriptionPlan from "@/components/SubscriptionPlan"; 
 import { Edit3 } from "lucide-react";
 
 const Profile = () => {
@@ -26,7 +27,9 @@ const Profile = () => {
   ];
   const postCount = posts.length;
 
-  // Updated subscription tiers to English and new structure
+  // Updated subscription tiers to English and new structure - this constant might become unused if not used elsewhere.
+  // For now, I'll leave it in case it's used by the tab implementation later.
+  // If it's confirmed to be unused after all Profile page changes, we can remove it.
   const subscriptionTiers = [
     { 
       name: "Fan Access", 
@@ -64,6 +67,7 @@ const Profile = () => {
         </div>
 
         <div className="px-4 md:px-6 flex flex-col items-center">
+          {/* Avatar, user name, username, bio */}
           <Avatar className="w-32 h-32 md:w-40 md:h-40 mb-4 border-4 border-neutral-100 dark:border-neutral-950 shadow-xl">
             <AvatarImage src={user.avatar} alt={user.name} />
             <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
@@ -100,37 +104,15 @@ const Profile = () => {
                 Edit Profile
               </Button>
             ) : (
-              // This section is for when it's NOT the user's own profile.
-              // It was previously showing a TipButton here, and another TipButton below.
-              // Let's ensure only one TipButton shows if it's not their own profile.
               <TipButton creatorName={user.name} />
             )}
-            {/* Tip button logic: Show if not own profile. The original code had a duplicate. */}
             {!user.isOwnProfile && <TipButton creatorName={user.name} />} 
-            {/* If it is own profile, no tip button to self. Current logic: user.isOwnProfile is true, so this won't show. */}
           </div>
 
-          {/* Subscription Tiers Section */}
-          {/* This section was for !user.isOwnProfile, which isn't the case here. */}
-          {/* The relevant section for own profile is below. */}
-
-          {/* If it's own profile, show "My Subscription Tiers" */}
-          {user.isOwnProfile && (
-             <div className="w-full mb-12">
-              <h2 className="text-2xl font-semibold mb-6 text-center">My Subscription Tiers</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                {subscriptionTiers.map((tier) => (
-                  <SubscriptionPlan key={tier.name} plan={tier} />
-                ))}
-              </div>
-              <Button variant="outline" className="mt-6 w-full max-w-md mx-auto block border-neutral-400 dark:border-neutral-600 hover:bg-neutral-200 dark:hover:bg-neutral-800">
-                Manage Subscriptions
-              </Button>
-            </div>
-          )}
-
+          {/* Subscription Tiers Section - REMOVED */}
           {/* Posts Grid */}
           <div>
+            {/* Posts grid title and content */}
             <h2 className="text-2xl font-semibold mb-6 text-center">Posts</h2>
             {posts.length > 0 ? (
               
