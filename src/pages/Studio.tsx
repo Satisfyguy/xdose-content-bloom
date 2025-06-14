@@ -1,6 +1,8 @@
-
 import React, { useState, useRef } from 'react';
 import { Film, Sparkles, Lightbulb } from "lucide-react";
+import { useAuth } from '@/contexts/AuthContext';
+import { createVideo } from '@/services/databaseService';
+import { toast } from "sonner";
 
 import StudioHeader from '@/components/studio/StudioHeader';
 import MuxVideoUpload from '@/components/studio/MuxVideoUpload';
@@ -9,6 +11,7 @@ import CreationChallengesSection from '@/components/studio/CreationChallengesSec
 import type { CreationChallenge } from '@/components/studio/CreationChallengesSection';
 
 const Studio = () => {
+  const { user } = useAuth();
   const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
   const [muxAssetId, setMuxAssetId] = useState<string | null>(null);
   const [muxPlaybackId, setMuxPlaybackId] = useState<string | null>(null);
@@ -16,7 +19,8 @@ const Studio = () => {
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState('');
   const [isDragging, setIsDragging] = useState(false);
-  const [tier, setTier] = useState<string>('free');
+  const [tier, setTier] = useState<string>('FREE');
+  const [isPublishing, setIsPublishing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const creationChallenges: CreationChallenge[] = [
@@ -64,31 +68,64 @@ const Studio = () => {
     }
   };
 
-  const handlePublish = () => {
-    if (!muxAssetId || !muxPlaybackId) {
-      console.error('Video not ready for publishing');
+  const handlePublish = async () => {
+    if (!muxAssetId || !muxPlaybackId || !user) {
+      toast.error('Video not ready for publishing');
       return;
     }
 
-    // Here we'll integrate with the database to save video metadata
-    console.log('Publishing video:', { 
-      title, 
-      description, 
-      tags, 
-      tier, 
-      muxAssetId,
-      muxPlaybackId,
-      fileName: selectedVideo?.name 
-    });
+    if (!title.trim()) {
+      toast.error('Please enter a video title');
+      return;
+    }
+
+    setIsPublishing(true);
+    
+    try {
+      const videoData = {
+        title: title.trim(),
+        description: description.trim() || undefined,
+        muxAssetId,
+        muxPlaybackId,
+        tier: tier as 'FREE' | 'FAN_ACCESS' | 'SUPPORTER_PLUS' | 'VIP',
+        tags: tags.split(',').map(tag => tag.trim()).filter(Boolean),
+        creatorId: user.id,
+      };
+
+      const createdVideo = await createVideo(videoData);
+      
+      toast.success('Video published successfully!');
+      console.log('Published video:', createdVideo);
+      
+      // Reset form
+      setSelectedVideo(null);
+      setMuxAssetId(null);
+      setMuxPlaybackId(null);
+      setTitle('');
+      setDescription('');
+      setTags('');
+      setTier('FREE');
+      
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      
+    } catch (error) {
+      console.error('Error publishing video:', error);
+      toast.error('Failed to publish video. Please try again.');
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
-  const isPublishReady = selectedVideo && title.trim() && muxAssetId && muxPlaybackId;
+  const isPublishReady = selectedVideo && title.trim() && muxAssetId && muxPlaybackId && !isPublishing;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
       <StudioHeader
         onPublishClick={handlePublish}
         isPublishDisabled={!isPublishReady}
+        isPublishing={isPublishing}
       />
 
       <main className="max-w-md mx-auto p-6 space-y-6">

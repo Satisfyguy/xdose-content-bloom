@@ -1,0 +1,97 @@
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      Role     @default(VIEWER)
+  avatar    String?
+  bio       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Creator-specific fields
+  videos       Video[]
+  subscribers  Subscription[] @relation("CreatorSubscriptions")
+  subscriptions Subscription[] @relation("UserSubscriptions")
+  tips         Tip[]          @relation("CreatorTips")
+  sentTips     Tip[]          @relation("UserTips")
+
+  @@map("users")
+}
+
+model Video {
+  id             String    @id @default(cuid())
+  title          String
+  description    String?
+  muxAssetId     String    @unique
+  muxPlaybackId  String
+  tier           Tier      @default(FREE)
+  tags           String[]
+  likes          Int       @default(0)
+  views          Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  // Relations
+  creatorId      String
+  creator        User      @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  
+  @@map("videos")
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  tier      Tier
+  price     Float
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userId    String
+  creatorId String
+  user      User     @relation("UserSubscriptions", fields: [userId], references: [id], onDelete: Cascade)
+  creator   User     @relation("CreatorSubscriptions", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, creatorId])
+  @@map("subscriptions")
+}
+
+model Tip {
+  id        String   @id @default(cuid())
+  amount    Float
+  message   String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  userId    String
+  creatorId String
+  user      User     @relation("UserTips", fields: [userId], references: [id], onDelete: Cascade)
+  creator   User     @relation("CreatorTips", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@map("tips")
+}
+
+enum Role {
+  VIEWER
+  CREATOR
+}
+
+enum Tier {
+  FREE
+  FAN_ACCESS
+  SUPPORTER_PLUS
+  VIP
+}

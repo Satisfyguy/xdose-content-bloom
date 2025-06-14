@@ -2,14 +2,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 
 interface StudioHeaderProps {
   onPublishClick: () => void;
   isPublishDisabled: boolean;
+  isPublishing?: boolean;
 }
 
-const StudioHeader: React.FC<StudioHeaderProps> = ({ onPublishClick, isPublishDisabled }) => {
+const StudioHeader: React.FC<StudioHeaderProps> = ({ 
+  onPublishClick, 
+  isPublishDisabled, 
+  isPublishing = false 
+}) => {
   const navigate = useNavigate();
 
   return (
@@ -26,7 +31,14 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({ onPublishClick, isPublishDi
           onClick={onPublishClick}
           disabled={isPublishDisabled}
         >
-          Publish
+          {isPublishing ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Publishing...
+            </>
+          ) : (
+            'Publish'
+          )}
         </Button>
       </div>
     </header>

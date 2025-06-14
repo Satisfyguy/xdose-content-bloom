@@ -1,4 +1,3 @@
-
 import Mux from '@mux/mux-node';
 
 // Initialize Mux client
@@ -12,7 +11,7 @@ export interface MuxAsset {
   status: 'waiting' | 'preparing' | 'ready' | 'errored';
   playback_ids?: Array<{
     id: string;
-    policy: 'public' | 'signed';
+    policy: 'public' | 'signed' | 'drm';
   }>;
   duration?: number;
   max_stored_resolution?: string;
