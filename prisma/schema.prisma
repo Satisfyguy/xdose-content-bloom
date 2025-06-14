@@ -1,4 +1,3 @@
-
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -8,13 +7,14 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiMDFKWFFQREs2WjZGOEE4QkRXNVREWTNRSFkiLCJ0ZW5hbnRfaWQiOiIwYWVhZDRhMzM2ODUzNGRjYjdlYTk1ZWI2MGJlOTA4ZWQ2OWQ1M2U0NzNlM2VjZjhhYzYyNWYzZWRjMGQ3YzAwIiwiaW50ZXJuYWxfc2VjcmV0IjoiMTkyNzBhYTUtYTM2YS00MTc0LWI0YTMtZTA2YmVmYWU0MTk1In0.9ef2_LIdHf866in0k2JYeX0dqrfJGiDA6vns0CxlZKY"
 }
 
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String
+  password  String
   role      Role     @default(VIEWER)
   avatar    String?
   bio       String?
