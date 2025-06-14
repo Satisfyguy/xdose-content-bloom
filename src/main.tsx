@@ -2,6 +2,6 @@
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
-import 'video.js/dist/video-js.css';
+import 'video.js/dist/video.min.css';
 
 createRoot(document.getElementById("root")!).render(<App />);
