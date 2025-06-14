@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,40 +12,18 @@ const CreatorProfile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
 
   const creator = {
-    name: "Emma", // Data - kept as is
-    username: "@emma_photo", // Data - kept as is
-    bio: "Photographer and visual storyteller. I add insight to captive beauty and emotion.", // Data - kept as is
+    name: "Emma",
+    username: "@emma_photo",
+    bio: "Photographer and visual storyteller. I add insight to captive beauty and emotion.",
     avatar: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png",
     coverImage: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png",
-    followers: "12.5K", // Data - kept as is
-    following: "892", // Data - kept as is
-    posts: "1,234", // Data - kept as is
+    followers: "12.5K",
+    following: "892",
+    posts: "1,234",
     isVerified: true
   };
 
-  // Updated subscription plans with string prices and new tier names/benefits
-  const subscriptionPlans = [
-    {
-      name: "Fan Access",
-      price: "$4.99", // Changed to string
-      benefits: ["Access to select posts", "Join community chat", "Monthly Q&A"],
-      isRecommended: false,
-    },
-    {
-      name: "Supporter Plus",
-      price: "$9.99", // Changed to string
-      benefits: ["Everything in Fan Access", "Exclusive photo sets", "Early access to new content"],
-      isRecommended: true,
-    },
-    {
-      name: "VIP Inner Circle",
-      price: "$24.99", // Changed to string
-      benefits: ["All Supporter Plus perks", "Behind-the-scenes videos", "Direct messaging priority", "Personalized thank-you note"],
-      isRecommended: false,
-    }
-  ];
-
-  const posts = [
+  const actualPosts = [
     "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png",
     "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png",
     "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png",
@@ -54,6 +31,30 @@ const CreatorProfile = () => {
     "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png",
     "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png"
   ];
+
+  const subscriptionPlans = [
+    {
+      name: "Fan Access",
+      price: "$4.99",
+      benefits: ["Access to select posts", "Join community chat", "Monthly Q&A"],
+      isRecommended: false,
+    },
+    {
+      name: "Supporter Plus",
+      price: "$9.99",
+      benefits: ["Everything in Fan Access", "Exclusive photo sets", "Early access to new content"],
+      isRecommended: true,
+    },
+    {
+      name: "VIP Inner Circle",
+      price: "$24.99",
+      benefits: ["All Supporter Plus perks", "Behind-the-scenes videos", "Direct messaging priority", "Personalized thank-you note"],
+      isRecommended: false,
+    }
+  ];
+
+  const fanAccessPlan = subscriptionPlans.find(plan => plan.name === "Fan Access");
+  const supporterPlusPlan = subscriptionPlans.find(plan => plan.name === "Supporter Plus");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
@@ -141,65 +142,74 @@ const CreatorProfile = () => {
           </div>
         </div>
 
-        {/* Subscription Plans */}
-        <div className="px-6 py-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Subscribe for exclusive content</h2>
-          <div className="grid gap-4">
-            {subscriptionPlans.map((plan, index) => (
-              <SubscriptionPlan key={index} plan={plan} />
-            ))}
-          </div>
-        </div>
+        {/* Subscription Plans section REMOVED as per user request */}
+        {/* 
+          <div className="px-6 py-6">
+            <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Subscribe for exclusive content</h2>
+            <div className="grid gap-4">
+              {subscriptionPlans.map((plan, index) => (
+                <SubscriptionPlan key={index} plan={plan} />
+              ))}
+            </div>
+          </div> 
+        */}
 
-        {/* Content Tabs */}
-        <div className="px-6">
-          <Tabs defaultValue="posts" className="w-full">
+        {/* Content Tabs - REWORKED */}
+        <div className="px-6 py-8">
+          <Tabs defaultValue="free" className="w-full">
             <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-800">
-              <TabsTrigger value="posts" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white">Posts</TabsTrigger>
-              <TabsTrigger value="exclusive" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white">Exclusive</TabsTrigger>
-              <TabsTrigger value="nfts" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white">NFTs</TabsTrigger>
+              <TabsTrigger value="free" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white">Free</TabsTrigger>
+              <TabsTrigger value="fan_access" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white">Fan Access</TabsTrigger>
+              <TabsTrigger value="supporter_plus" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white">Supporter Plus</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="posts" className="mt-6">
-              <div className="grid grid-cols-3 gap-1">
-                {posts.map((post, index) => (
-                  <div key={index} className="aspect-square">
-                    <img 
-                      src={post} 
-                      alt={`Post ${index + 1}`} 
-                      className="w-full h-full object-cover rounded-lg"
-                    />
+            <TabsContent value="free" className="mt-6">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Free Content</h2>
+              {actualPosts.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 md:gap-2">
+                  {actualPosts.map((post, index) => (
+                    <div key={index} className="aspect-square bg-neutral-200 dark:bg-neutral-800 rounded-lg overflow-hidden">
+                      <img 
+                        src={post} 
+                        alt={`Post ${index + 1}`} 
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-10 text-gray-500 dark:text-gray-400">
+                  <p className="text-lg">No free content available at the moment.</p>
+                </div>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="fan_access" className="mt-6">
+              {fanAccessPlan ? (
+                <>
+                  <h2 className="text-xl font-semibold mb-4 text-center text-gray-900 dark:text-white">Unlock Fan Access</h2>
+                  <p className="text-center text-gray-600 dark:text-gray-400 mb-6">Subscribe to the "{fanAccessPlan.name}" tier to view this content.</p>
+                  <div className="max-w-sm mx-auto">
+                    <SubscriptionPlan plan={fanAccessPlan} />
                   </div>
-                ))}
-              </div>
+                </>
+              ) : (
+                <p className="text-center text-gray-500 dark:text-gray-400">Fan Access tier details not available.</p>
+              )}
             </TabsContent>
             
-            <TabsContent value="exclusive" className="mt-6">
-              <Card className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30">
-                <CardContent className="p-6 text-center">
-                  <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Exclusive Content</h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4">
-                    Subscribe to access premium photos, tutorials, and behind-the-scenes content.
-                  </p>
-                  <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
-                    Subscribe Now
-                  </Button>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="nfts" className="mt-6">
-              <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30">
-                <CardContent className="p-6 text-center">
-                  <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">NFT Collection</h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4">
-                    Discover unique digital collectibles from this creator.
-                  </p>
-                  <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white">
-                    Explore NFTs
-                  </Button>
-                </CardContent>
-              </Card>
+            <TabsContent value="supporter_plus" className="mt-6">
+               {supporterPlusPlan ? (
+                <>
+                  <h2 className="text-xl font-semibold mb-4 text-center text-gray-900 dark:text-white">Unlock Supporter Plus</h2>
+                  <p className="text-center text-gray-600 dark:text-gray-400 mb-6">Subscribe to the "{supporterPlusPlan.name}" tier for the best experience.</p>
+                  <div className="max-w-sm mx-auto">
+                    <SubscriptionPlan plan={supporterPlusPlan} />
+                  </div>
+                </>
+              ) : (
+                <p className="text-center text-gray-500 dark:text-gray-400">Supporter Plus tier details not available.</p>
+              )}
             </TabsContent>
           </Tabs>
         </div>
@@ -211,4 +221,3 @@ const CreatorProfile = () => {
 };
 
 export default CreatorProfile;
-
