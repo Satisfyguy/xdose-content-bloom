@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Heart, MessageSquare, Share } from "lucide-react";
 
@@ -54,6 +53,7 @@ const FeedPost = ({ post, variant, onPostClick }: FeedPostProps) => {
       <img 
         src={post.content} 
         alt={`Post by ${post.creator}`} 
+        loading="lazy" // Added lazy loading
         className={`w-full ${imageAspectRatio} object-cover rounded-xl bg-gray-200 dark:bg-gray-700 cursor-pointer hover:opacity-90 transition-opacity`}
         onClick={() => onPostClick(post)} // Le clic sur l'image ouvre le modal
       />

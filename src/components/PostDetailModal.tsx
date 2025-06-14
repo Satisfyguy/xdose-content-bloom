@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -80,7 +79,12 @@ const PostDetailModal = ({ post, isOpen, onClose }: PostDetailModalProps) => {
         </DialogHeader>
         
         <div className="w-full aspect-video bg-gray-200 dark:bg-gray-800">
-            <img src={post.content} alt={`Post by ${post.creator}`} className="w-full h-full object-contain" />
+            <img 
+              src={post.content} 
+              alt={`Post by ${post.creator}`} 
+              loading="lazy" // Added lazy loading
+              className="w-full h-full object-contain" 
+            />
         </div>
 
         <div className="p-4 space-y-3">
