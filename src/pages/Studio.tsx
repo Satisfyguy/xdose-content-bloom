@@ -1,34 +1,71 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Camera, Image, Video, Wand2, Palette, Type, Music } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowLeft, Upload, Video, Play, Pause, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Studio = () => {
   const navigate = useNavigate();
-  const [selectedMedia, setSelectedMedia] = useState<string | null>("/lovable-uploads/2b74d434-70f3-4444-a0e0-35b0e039b879.png");
-  const [caption, setCaption] = useState('');
-  const [isPremium, setIsPremium] = useState(false);
-  const [price, setPrice] = useState('');
+  const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [tags, setTags] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const creationTools = [
-    { icon: Camera, label: "Camera", color: "from-blue-500 to-cyan-500" },
-    { icon: Image, label: "Gallery", color: "from-green-500 to-emerald-500" },
-    { icon: Video, label: "Video", color: "from-red-500 to-pink-500", action: () => navigate('/upload') },
-    { icon: Wand2, label: "AI Magic", color: "from-purple-500 to-violet-500" },
-  ];
+  const handleVideoSelect = (file: File) => {
+    if (file.type.startsWith('video/')) {
+      setSelectedVideo(file);
+      const url = URL.createObjectURL(file);
+      setVideoUrl(url);
+    }
+  };
 
-  const editingTools = [
-    { icon: Palette, label: "Filters", color: "from-orange-500 to-red-500" },
-    { icon: Type, label: "Text", color: "from-blue-500 to-purple-500" },
-    { icon: Music, label: "Music", color: "from-pink-500 to-rose-500" },
-    { icon: Wand2, label: "Effects", color: "from-green-500 to-teal-500" },
-  ];
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleVideoSelect(files[0]);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const togglePlayPause = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const removeVideo = () => {
+    setSelectedVideo(null);
+    setVideoUrl(null);
+    setIsPlaying(false);
+    if (videoUrl) {
+      URL.revokeObjectURL(videoUrl);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
@@ -38,11 +75,12 @@ const Studio = () => {
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <div className="text-lg font-semibold">Studio</div>
+          <div className="text-lg font-semibold">Upload Video</div>
           <Button 
             variant="default"
             size="sm"
             className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+            disabled={!selectedVideo || !title.trim()}
           >
             Publish
           </Button>
@@ -50,134 +88,143 @@ const Studio = () => {
       </header>
 
       <main className="max-w-md mx-auto p-6 space-y-6">
-        {/* Media Preview */}
+        {/* Video Upload Area */}
         <Card className="bg-white/80 backdrop-blur-sm border-gray-200/20">
-          <CardContent className="p-0">
-            <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
-              {selectedMedia ? (
-                <img 
-                  src={selectedMedia} 
-                  alt="Preview" 
-                  className="w-full h-full object-cover"
+          <CardContent className="p-6">
+            {!selectedVideo ? (
+              <div
+                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                  isDragging 
+                    ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' 
+                    : 'border-gray-300 dark:border-gray-600'
+                }`}
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+              >
+                <Video className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                <h3 className="text-lg font-semibold mb-2">Upload your video</h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  Drag and drop your video here, or click to browse
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0 hover:from-purple-600 hover:to-blue-600"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Choose Video
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="video/*"
+                  className="hidden"
+                  onChange={(e) => e.target.files && handleVideoSelect(e.target.files[0])}
                 />
-              ) : (
-                <div className="flex items-center justify-center h-full text-gray-400">
-                  <div className="text-center">
-                    <Camera className="w-12 h-12 mx-auto mb-2" />
-                    <p>Select or capture media</p>
+                <p className="text-xs text-gray-500 mt-4">
+                  Supported formats: MP4, MOV, AVI (Max 500MB)
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+                  <video
+                    ref={videoRef}
+                    src={videoUrl || undefined}
+                    className="w-full h-full object-cover"
+                    onPlay={() => setIsPlaying(true)}
+                    onPause={() => setIsPlaying(false)}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Button
+                      variant="ghost"
+                      size="lg"
+                      onClick={togglePlayPause}
+                      className="bg-black/50 hover:bg-black/70 text-white rounded-full p-4"
+                    >
+                      {isPlaying ? (
+                        <Pause className="w-8 h-8" />
+                      ) : (
+                        <Play className="w-8 h-8" />
+                      )}
+                    </Button>
                   </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={removeVideo}
+                    className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
                 </div>
-              )}
-            </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <p>File: {selectedVideo.name}</p>
+                  <p>Size: {(selectedVideo.size / (1024 * 1024)).toFixed(2)} MB</p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        {/* Creation Tools */}
-        <div>
-          <h2 className="text-lg font-semibold mb-3">Create</h2>
-          <div className="grid grid-cols-4 gap-3">
-            {creationTools.map((tool, index) => {
-              const Icon = tool.icon;
-              return (
-                <Button
-                  key={index}
-                  variant="outline"
-                  className={`h-20 flex-col space-y-2 bg-gradient-to-br ${tool.color} text-white border-0 hover:opacity-90`}
-                  onClick={tool.action}
-                >
-                  <Icon className="w-6 h-6" />
-                  <span className="text-xs">{tool.label}</span>
-                </Button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Editing Tools */}
-        {selectedMedia && (
-          <div>
-            <h2 className="text-lg font-semibold mb-3">Edit</h2>
-            <div className="grid grid-cols-4 gap-3">
-              {editingTools.map((tool, index) => {
-                const Icon = tool.icon;
-                return (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    className={`h-20 flex-col space-y-2 bg-gradient-to-br ${tool.color} text-white border-0 hover:opacity-90`}
-                  >
-                    <Icon className="w-6 h-6" />
-                    <span className="text-xs">{tool.label}</span>
-                  </Button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Post Details */}
+        {/* Video Details */}
         <Card className="bg-white/80 backdrop-blur-sm border-gray-200/20">
-          <CardContent className="p-4 space-y-4">
+          <CardContent className="p-6 space-y-4">
             <div>
-              <Label htmlFor="caption">Caption</Label>
-              <Textarea
-                id="caption"
-                placeholder="Share your story..."
-                value={caption}
-                onChange={(e) => setCaption(e.target.value)}
+              <Label htmlFor="title">Titre *</Label>
+              <Input
+                id="title"
+                placeholder="Donnez un titre accrocheur à votre vidéo..."
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 className="mt-2"
+                required
               />
             </div>
 
-            <Tabs defaultValue="public" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="public">Public</TabsTrigger>
-                <TabsTrigger value="premium">Premium</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="public" className="mt-4">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  This post will be visible to all your followers for free.
-                </p>
-              </TabsContent>
-              
-              <TabsContent value="premium" className="mt-4 space-y-4">
-                <div>
-                  <Label htmlFor="price">Price ($)</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    placeholder="0.00"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="mt-2"
-                  />
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  This post will be available for subscribers or as pay-per-view.
-                </p>
-              </TabsContent>
-            </Tabs>
+            <div>
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                placeholder="Décrivez votre vidéo..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="mt-2"
+                rows={4}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="tags">Tags</Label>
+              <Input
+                id="tags"
+                placeholder="Séparez les tags par des virgules (ex: musique, dance, fun)"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                className="mt-2"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Utilisez des tags pour aider les gens à découvrir votre contenu
+              </p>
+            </div>
           </CardContent>
         </Card>
 
-        {/* AI Suggestions */}
+        {/* Upload Status */}
         <Card className="bg-gradient-to-br from-purple-50/50 to-pink-50/50 border-purple-200/20">
           <CardContent className="p-4">
             <div className="flex items-center space-x-2 mb-3">
-              <Wand2 className="w-5 h-5 text-purple-600" />
-              <h3 className="font-semibold text-purple-800">AI Suggestions</h3>
+              <Upload className="w-5 h-5 text-purple-600" />
+              <h3 className="font-semibold text-purple-800">
+                {selectedVideo ? 'Prêt à publier' : 'En attente de vidéo'}
+              </h3>
             </div>
-            <div className="space-y-2 text-sm">
-              <div className="bg-white/60 rounded-lg p-3">
-                <p className="font-medium">Optimal posting time</p>
-                <p className="text-gray-600">Post in 2 hours for maximum engagement</p>
-              </div>
-              <div className="bg-white/60 rounded-lg p-3">
-                <p className="font-medium">Trending hashtags</p>
-                <p className="text-gray-600">#photography #portrait #creative</p>
-              </div>
-            </div>
+            <p className="text-sm text-gray-600">
+              {selectedVideo 
+                ? 'Votre vidéo sera traitée et disponible pour votre audience après publication.'
+                : 'Sélectionnez une vidéo pour commencer.'}
+            </p>
           </CardContent>
         </Card>
 
