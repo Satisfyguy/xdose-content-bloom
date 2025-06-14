@@ -1,17 +1,15 @@
-
 import React, { useEffect, useRef } from 'react';
 import videojs from 'video.js';
-import type Player from 'video.js/dist/types/player';
 
 export interface VideoPlayerProps {
   options: videojs.PlayerOptions;
-  onReady?: (player: Player) => void;
+  onReady?: (player: videojs.Player) => void;
   className?: string;
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ options, onReady, className }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const playerRef = useRef<Player | null>(null);
+  const playerRef = useRef<videojs.Player | null>(null);
 
   useEffect(() => {
     // S'assurer que le lecteur n'est initialisé qu'une seule fois

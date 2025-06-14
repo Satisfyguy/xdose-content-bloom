@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Heart, X, Bookmark } from "lucide-react"; // Suppression de MessageSquare et Share
 import VideoPlayer from './VideoPlayer';
+import type videojs from 'video.js';
 
 // Interface Post mise à jour
 interface Post {
@@ -49,7 +51,7 @@ const PostDetailModal = ({ post, isOpen, onClose, onToggleBookmark }: PostDetail
     onToggleBookmark(post.id);
   };
   
-  const videoJsOptions = useMemo(() => ({
+  const videoJsOptions = useMemo((): videojs.PlayerOptions => ({
     autoplay: true,
     loop: true,
     controls: true,
