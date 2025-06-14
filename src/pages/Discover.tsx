@@ -3,11 +3,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, TrendingUp, Sparkles, Film, PlaySquare, Lightbulb } from "lucide-react";
+import { Search, TrendingUp, Sparkles, Film, PlaySquare, Lightbulb, Video } from "lucide-react";
 import NavigationBar from "@/components/NavigationBar";
+
+interface ContentSuggestion {
+  id: string;
+  thumbnailUrl: string;
+  videoUrl: string;
+  title?: string;
+}
 
 const Discover = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [hoveredVideoId, setHoveredVideoId] = useState<string | null>(null);
 
   const trendingTopics = [
     { name: "Short Films", icon: Film, count: "8.2K videos", color: "from-blue-500 to-cyan-500" },
@@ -39,13 +47,16 @@ const Discover = () => {
     }
   ];
 
-  const contentSuggestions = [
-    "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png",
-    "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png",
-    "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png",
-    "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png",
-    "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png",
-    "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png"
+  // Placeholder video - replace with actual video URLs or a dynamic source
+  const placeholderVideoUrl = "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4";
+
+  const contentSuggestions: ContentSuggestion[] = [
+    { id: "1", thumbnailUrl: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", videoUrl: placeholderVideoUrl, title: "Mountain Adventure" },
+    { id: "2", thumbnailUrl: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png", videoUrl: placeholderVideoUrl, title: "City Lights" },
+    { id: "3", thumbnailUrl: "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png", videoUrl: placeholderVideoUrl, title: "Forest Trail" },
+    { id: "4", thumbnailUrl: "/lovable-uploads/7628e41c-da82-4541-a855-af18775954cb.png", videoUrl: placeholderVideoUrl, title: "Ocean Waves" },
+    { id: "5", thumbnailUrl: "/lovable-uploads/c9a9c75e-c2f2-47a1-8751-766ef79f54ae.png", videoUrl: placeholderVideoUrl, title: "Desert Sunset" },
+    { id: "6", thumbnailUrl: "/lovable-uploads/b8ac03f0-b68d-4fc1-98e3-189a0b874c72.png", videoUrl: placeholderVideoUrl, title: "Abstract Art" }
   ];
 
   return (
@@ -141,21 +152,49 @@ const Discover = () => {
           </div>
         </div>
 
-        {/* AI Personalized Content */}
+        {/* AI Personalized Content - Updated for Video Previews */}
         <div>
           <div className="flex items-center space-x-2 mb-4">
-            <Sparkles className="w-5 h-5 text-blue-600" />
+            <Video className="w-5 h-5 text-teal-500" /> {/* Using Video icon */}
             <h2 className="text-lg font-semibold">For You</h2>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {contentSuggestions.map((content, index) => (
-              <div key={index} className="aspect-square relative group cursor-pointer">
-                <img 
-                  src={content} 
-                  alt={`Suggestion ${index + 1}`}
-                  className="w-full h-full object-cover rounded-lg"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-lg" />
+            {contentSuggestions.map((content) => (
+              <div 
+                key={content.id} 
+                className="aspect-square relative group cursor-pointer rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700"
+                onMouseEnter={() => setHoveredVideoId(content.id)}
+                onMouseLeave={() => setHoveredVideoId(null)}
+              >
+                {hoveredVideoId === content.id ? (
+                  <video
+                    src={content.videoUrl}
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline // Important for iOS Safari
+                  />
+                ) : (
+                  <img 
+                    src={content.thumbnailUrl} 
+                    alt={content.title || `Suggestion ${content.id}`}
+                    className="w-full h-full object-cover"
+                  />
+                )}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-end p-2">
+                  {content.title && hoveredVideoId !== content.id && (
+                     <p className="text-white text-xs font-medium truncate bg-black/30 px-1 py-0.5 rounded">
+                       {content.title}
+                     </p>
+                  )}
+                </div>
+                 {/* Small play icon overlay for non-hovered videos */}
+                {hoveredVideoId !== content.id && (
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <PlaySquare className="w-8 h-8 text-white/70" />
+                  </div>
+                )}
               </div>
             ))}
           </div>
