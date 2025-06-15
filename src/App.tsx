@@ -13,20 +13,20 @@ import Profile from "./pages/Profile";
 import Upload from "./pages/Upload";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
-import { NavigationBar } from '@/components/NavigationBar';
+import NavigationBar from '@/components/NavigationBar';
 import { useAuth } from '@/contexts/AuthContext';
 
 const queryClient = new QueryClient();
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? <>{children}</> : <Navigate to="/auth" />;
+  const { user } = useAuth();
+  return user ? <>{children}</> : <Navigate to="/auth" />;
 }
 
 function CreatorRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, user } = useAuth();
-  if (!isAuthenticated) return <Navigate to="/auth" />;
-  if (user?.role !== 'CREATOR') return <Navigate to="/" />;
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/auth" />;
+  if (user.role !== 'creator') return <Navigate to="/" />;
   return <>{children}</>;
 }
 

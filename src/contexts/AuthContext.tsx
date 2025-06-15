@@ -61,9 +61,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Login failed');
+      const userWithNormalizedRole = { ...data.user, role: data.user.role.toLowerCase() };
       localStorage.setItem('auth_token', data.token);
-      localStorage.setItem('user_data', JSON.stringify(data.user));
-      setUser(data.user);
+      localStorage.setItem('user_data', JSON.stringify(userWithNormalizedRole));
+      setUser(userWithNormalizedRole);
       return true;
     } catch (error) {
       console.error('Login error:', error);
@@ -83,9 +84,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Signup failed');
+      const userWithNormalizedRole = { ...data.user, role: data.user.role.toLowerCase() };
       localStorage.setItem('auth_token', data.token);
-      localStorage.setItem('user_data', JSON.stringify(data.user));
-      setUser(data.user);
+      localStorage.setItem('user_data', JSON.stringify(userWithNormalizedRole));
+      setUser(userWithNormalizedRole);
       return true;
     } catch (error) {
       console.error('Signup error:', error);
