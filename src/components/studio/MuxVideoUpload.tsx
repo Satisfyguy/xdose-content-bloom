@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +15,7 @@ interface MuxVideoUploadProps {
   handleDragOver: (e: React.DragEvent) => void;
   handleDragLeave: (e: React.DragEvent) => void;
   fileInputRef: React.RefObject<HTMLInputElement>;
+  playbackId?: string | null;
 }
 
 const MuxVideoUpload: React.FC<MuxVideoUploadProps> = ({
@@ -28,12 +28,31 @@ const MuxVideoUpload: React.FC<MuxVideoUploadProps> = ({
   handleDragOver,
   handleDragLeave,
   fileInputRef,
+  playbackId,
 }) => {
-  const { status, progress, error, asset, uploadVideo, reset } = useVideoUpload();
+  const { status, progress, error, uploadUrl, uploadId, requestUploadUrl, uploadFile, reset } = useVideoUpload();
 
-  const handleFileSelect = (file: File) => {
+  const handleFileSelect = async (file: File) => {
     onVideoSelect(file);
-    uploadVideo(file);
+    // 1. Demander une URL d'upload
+    const uploadData = await requestUploadUrl();
+    if (!uploadData) return;
+    // 2. Uploader le fichier sur l'uploadUrl
+    await uploadFile(file, uploadData.uploadUrl);
+    // 3. Créer la vidéo en base
+    await fetch('/api/videos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: file.name,
+        description: '',
+        tags: [],
+        tier: 'FREE',
+        creatorId: 'TODO', // à remplacer par l'ID réel du créateur
+        muxUploadId: uploadData.uploadId,
+      }),
+    });
+    // 4. Le webhook Mux complètera la vidéo (assetId, playbackId)
   };
 
   const handleRemoveVideo = () => {
@@ -42,10 +61,10 @@ const MuxVideoUpload: React.FC<MuxVideoUploadProps> = ({
   };
 
   React.useEffect(() => {
-    if (status === 'complete' && asset && asset.playback_ids?.[0]) {
-      onUploadComplete(asset.id, asset.playback_ids[0].id);
+    if (status === 'complete' && uploadUrl && uploadId) {
+      onUploadComplete(uploadId, uploadUrl);
     }
-  }, [status, asset, onUploadComplete]);
+  }, [status, uploadUrl, uploadId, onUploadComplete]);
 
   const getStatusInfo = () => {
     switch (status) {
@@ -125,9 +144,9 @@ const MuxVideoUpload: React.FC<MuxVideoUploadProps> = ({
         ) : (
           <div className="space-y-4">
             <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
-              {status === 'complete' && asset?.playback_ids?.[0] ? (
+              {playbackId ? (
                 <video
-                  src={getPlaybackUrl(asset.playback_ids[0].id)}
+                  src={getPlaybackUrl(playbackId)}
                   className="w-full h-full object-cover"
                   controls
                   poster=""

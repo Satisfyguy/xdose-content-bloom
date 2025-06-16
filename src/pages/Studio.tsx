@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Film, Sparkles, Lightbulb } from "lucide-react";
 import { useAuth } from '@/contexts/AuthContext';
 import { createVideo } from '@/services/mockDatabaseService';
@@ -22,6 +22,7 @@ const Studio = () => {
   const [tier, setTier] = useState<string>('FREE');
   const [isPublishing, setIsPublishing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [pollingUploadId, setPollingUploadId] = useState<string | null>(null);
 
   const creationChallenges: CreationChallenge[] = [
     { id: "challenge1", title: "Desire in Black and White", description: "Express passion and eroticism using only shades of gray.", icon: Film, participants: 120, deadline: "2025-07-15" },
@@ -29,15 +30,37 @@ const Studio = () => {
     { id: "challenge3", title: "My First Time (Reimagined)", description: "Tell an original and sensual story on the theme of discovery.", icon: Lightbulb, participants: 210, deadline: "2025-08-10" },
   ];
 
+  // Polling pour récupérer le playbackId après upload
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (pollingUploadId && !muxPlaybackId) {
+      interval = setInterval(async () => {
+        try {
+          const res = await fetch(`/api/videos?uploadId=${pollingUploadId}`);
+          if (res.ok) {
+            const video = await res.json();
+            if (video && video.muxPlaybackId) {
+              setMuxPlaybackId(video.muxPlaybackId);
+              setMuxAssetId(video.muxAssetId);
+              clearInterval(interval);
+            }
+          }
+        } catch (e) {}
+      }, 3000);
+    }
+    return () => clearInterval(interval);
+  }, [pollingUploadId, muxPlaybackId]);
+
   const handleVideoSelect = (file: File) => {
     if (file.type.startsWith('video/')) {
       setSelectedVideo(file);
     }
   };
 
-  const handleUploadComplete = (assetId: string, playbackId: string) => {
-    setMuxAssetId(assetId);
-    setMuxPlaybackId(playbackId);
+  const handleUploadComplete = (assetId: string, uploadId: string) => {
+    setPollingUploadId(uploadId);
+    setMuxAssetId(null);
+    setMuxPlaybackId(null);
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -139,6 +162,7 @@ const Studio = () => {
           handleDragOver={handleDragOver}
           handleDragLeave={handleDragLeave}
           fileInputRef={fileInputRef}
+          playbackId={muxPlaybackId}
         />
 
         <VideoDetailsForm
