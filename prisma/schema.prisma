@@ -1,3 +1,4 @@
+
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -7,14 +8,13 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiMDFKWFFQREs2WjZGOEE4QkRXNVREWTNRSFkiLCJ0ZW5hbnRfaWQiOiIwYWVhZDRhMzM2ODUzNGRjYjdlYTk1ZWI2MGJlOTA4ZWQ2OWQ1M2U0NzNlM2VjZjhhYzYyNWYzZWRjMGQ3YzAwIiwiaW50ZXJuYWxfc2VjcmV0IjoiMTkyNzBhYTUtYTM2YS00MTc0LWI0YTMtZTA2YmVmYWU0MTk1In0.9ef2_LIdHf866in0k2JYeX0dqrfJGiDA6vns0CxlZKY"
+  url      = env("DATABASE_URL")
 }
 
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String
-  password  String
   role      Role     @default(VIEWER)
   avatar    String?
   bio       String?
@@ -38,8 +38,6 @@ model Video {
   muxAssetId     String    @unique
   muxPlaybackId  String
   tier           Tier      @default(FREE)
-  status         VideoStatus @default(PROCESSING)
-  error          String?
   tags           String[]
   likes          Int       @default(0)
   views          Int       @default(0)
@@ -96,10 +94,4 @@ enum Tier {
   FAN_ACCESS
   SUPPORTER_PLUS
   VIP
-}
-
-enum VideoStatus {
-  PROCESSING
-  READY
-  ERROR
 }

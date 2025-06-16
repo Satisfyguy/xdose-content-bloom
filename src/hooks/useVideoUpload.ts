@@ -1,5 +1,6 @@
+
 import { useState, useCallback } from 'react';
-import { uploadVideoToMux, getAsset, type MuxAsset } from '@/services/mockMuxService';
+import { uploadVideoToMux, getAsset, type MuxAsset } from '@/services/muxService';
 
 interface UploadState {
   isUploading: boolean;
@@ -30,7 +31,7 @@ export const useVideoUpload = () => {
     }));
 
     try {
-      // Upload to Mock Mux
+      // Upload to Mux
       const assetId = await uploadVideoToMux(file, (progress) => {
         setState(prev => ({ ...prev, progress }));
       });
@@ -63,7 +64,7 @@ export const useVideoUpload = () => {
             }));
           } else {
             // Continue polling
-            setTimeout(pollAsset, 1000);
+            setTimeout(pollAsset, 3000);
           }
         } catch (error) {
           console.error('Error polling asset:', error);
@@ -77,7 +78,7 @@ export const useVideoUpload = () => {
       };
 
       // Start polling after a delay
-      setTimeout(pollAsset, 1000);
+      setTimeout(pollAsset, 2000);
 
     } catch (error) {
       console.error('Upload error:', error);

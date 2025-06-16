@@ -22,8 +22,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# Ajout d'un script pour automatiser les commandes git
-scripts/
-  git-push.sh
-.vercel

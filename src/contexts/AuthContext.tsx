@@ -1,5 +1,5 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { login as apiLogin, register as apiRegister } from '@/api/auth';
 
 export type UserRole = 'viewer' | 'creator';
 
@@ -54,17 +54,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
-      const res = await fetch('/api/auth-login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Login failed');
-      const userWithNormalizedRole = { ...data.user, role: data.user.role.toLowerCase() };
-      localStorage.setItem('auth_token', data.token);
-      localStorage.setItem('user_data', JSON.stringify(userWithNormalizedRole));
-      setUser(userWithNormalizedRole);
+      // Here we should make API call for authentication
+      // For now, we simulate a successful login
+      const mockUser = {
+        id: '1',
+        email,
+        name: email.split('@')[0],
+        role: 'creator' as UserRole, // Default role for existing users
+        avatar: '/lovable-uploads/8bfa086c-cf08-44da-97b5-dab0efd545e1.png'
+      };
+      
+      localStorage.setItem('auth_token', 'mock_token');
+      localStorage.setItem('user_data', JSON.stringify(mockUser));
+      setUser(mockUser);
       return true;
     } catch (error) {
       console.error('Login error:', error);
@@ -77,17 +79,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signup = async (email: string, password: string, name: string, role: UserRole): Promise<boolean> => {
     try {
       setIsLoading(true);
-      const res = await fetch('/api/auth-register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, name, role }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Signup failed');
-      const userWithNormalizedRole = { ...data.user, role: data.user.role.toLowerCase() };
-      localStorage.setItem('auth_token', data.token);
-      localStorage.setItem('user_data', JSON.stringify(userWithNormalizedRole));
-      setUser(userWithNormalizedRole);
+      // Here we should make API call for registration
+      // For now, we simulate a successful signup
+      const mockUser = {
+        id: Date.now().toString(),
+        email,
+        name,
+        role,
+        avatar: '/lovable-uploads/8bfa086c-cf08-44da-97b5-dab0efd545e1.png'
+      };
+      
+      localStorage.setItem('auth_token', 'mock_token');
+      localStorage.setItem('user_data', JSON.stringify(mockUser));
+      setUser(mockUser);
       return true;
     } catch (error) {
       console.error('Signup error:', error);

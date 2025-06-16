@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { User, ListFilter, LogOut } from "lucide-react";
+import { User, ListFilter } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import {
@@ -13,8 +14,6 @@ import {
 } from "@/components/ui/select";
 import { XDoseLogo } from '@/components/XDoseLogo';
 import type { SortOption } from '@/types';
-import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 interface FeedHeaderProps {
   sortOption: SortOption;
@@ -29,28 +28,15 @@ const FeedHeader: React.FC<FeedHeaderProps> = ({
   showOnlyBookmarked,
   onShowOnlyBookmarkedChange,
 }) => {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/auth');
-  };
-
   return (
     <header className="max-w-md mx-auto px-4 sm:px-6 py-6">
       <div className="flex items-center justify-between mb-4">
         <XDoseLogo size="md" />
-        <div className="flex items-center space-x-2">
-          <Link to="/profile">
-            <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400">
-              <User className="w-6 h-6" />
-            </Button>
-          </Link>
-          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400" onClick={handleLogout} aria-label="Logout">
-            <LogOut className="w-6 h-6" />
+        <Link to="/profile">
+          <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400">
+            <User className="w-6 h-6" />
           </Button>
-        </div>
+        </Link>
       </div>
       <div className="flex items-center justify-between space-x-4">
         <div className="flex items-center space-x-2">
