@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useFeedData } from '@/hooks/useFeedData';
 import FeedHeader from '@/components/FeedHeader';
@@ -6,6 +5,8 @@ import FeedGrid from '@/components/FeedGrid';
 import NavigationBar from "@/components/NavigationBar";
 import type { Post } from '@/types';
 import PostDetailModal from '@/components/PostDetailModal';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
   const {
@@ -21,6 +22,17 @@ const Index = () => {
   } = useFeedData("recent", false);
 
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (!isLoading && !user) {
+      navigate('/auth');
+    }
+  }, [user, isLoading, navigate]);
+
+  if (isLoading) return null;
+  if (!user) return null;
 
   const handlePostClick = (post: Post) => {
     setSelectedPost(post);

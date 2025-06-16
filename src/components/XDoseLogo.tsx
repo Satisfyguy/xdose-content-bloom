@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface XDoseLogoProps {
@@ -39,7 +38,7 @@ export const XDoseLogo: React.FC<XDoseLogoProps> = ({
     : XDose_COLORS;
 
   const sizes = {
-    sm: 'text-xl', // Modifié pour correspondre plus à l'ancien text-2xl
+    sm: 'text-xl',
     md: 'text-3xl',
     lg: 'text-5xl',
     xl: 'text-7xl',
@@ -53,7 +52,7 @@ export const XDoseLogo: React.FC<XDoseLogoProps> = ({
       return () => clearInterval(interval);
     }
     if (!isHovered && !neuroStyles?.animationSpeed) {
-      setColorIndex(0); // Réinitialise à la première couleur quand on ne survole plus
+      setColorIndex(0);
     }
   }, [isHovered, colors.length, neuroStyles?.animationSpeed]);
 
@@ -83,7 +82,7 @@ export const XDoseLogo: React.FC<XDoseLogoProps> = ({
         >
           X
         </span>
-        <span className={neuroStyles?.textColor || 'text-gray-800 dark:text-gray-200'}>Dose</span> {/* Ajout du style pour le mode sombre */}
+        <span className={neuroStyles?.textColor || 'text-gray-800 dark:text-gray-200'}>Dose</span>
       </div>
       <div
         className={`h-1 bg-gradient-to-r ${neuroStyles?.primaryGradient || colors[colorIndex]} rounded-full mt-1 transition-all duration-500 ${

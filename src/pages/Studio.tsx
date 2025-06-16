@@ -58,7 +58,14 @@ const Studio = () => {
   };
 
   const handleUploadComplete = (assetId: string, uploadId: string) => {
-    setPollingUploadId(uploadId);
+    // Always extract the pure ID if a URL is passed
+    let id = uploadId;
+    if (id && id.startsWith('http')) {
+      const match = id.match(/\/upload\/([\w\d]+)/);
+      if (match) id = match[1];
+    }
+    console.log('handleUploadComplete (final) uploadId:', id);
+    setPollingUploadId(id);
     setMuxAssetId(null);
     setMuxPlaybackId(null);
   };
@@ -163,6 +170,7 @@ const Studio = () => {
           handleDragLeave={handleDragLeave}
           fileInputRef={fileInputRef}
           playbackId={muxPlaybackId}
+          creatorId={user?.id}
         />
 
         <VideoDetailsForm

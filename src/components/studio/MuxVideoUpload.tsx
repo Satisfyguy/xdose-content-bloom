@@ -16,6 +16,7 @@ interface MuxVideoUploadProps {
   handleDragLeave: (e: React.DragEvent) => void;
   fileInputRef: React.RefObject<HTMLInputElement>;
   playbackId?: string | null;
+  creatorId?: string;
 }
 
 const MuxVideoUpload: React.FC<MuxVideoUploadProps> = ({
@@ -29,6 +30,7 @@ const MuxVideoUpload: React.FC<MuxVideoUploadProps> = ({
   handleDragLeave,
   fileInputRef,
   playbackId,
+  creatorId,
 }) => {
   const { status, progress, error, uploadUrl, uploadId, requestUploadUrl, uploadFile, reset } = useVideoUpload();
 
@@ -48,7 +50,7 @@ const MuxVideoUpload: React.FC<MuxVideoUploadProps> = ({
         description: '',
         tags: [],
         tier: 'FREE',
-        creatorId: 'TODO', // à remplacer par l'ID réel du créateur
+        creatorId: creatorId || 'unknown',
         muxUploadId: uploadData.uploadId,
       }),
     });
@@ -61,8 +63,8 @@ const MuxVideoUpload: React.FC<MuxVideoUploadProps> = ({
   };
 
   React.useEffect(() => {
-    if (status === 'complete' && uploadUrl && uploadId) {
-      onUploadComplete(uploadId, uploadUrl);
+    if (status === 'complete' && uploadId) {
+      onUploadComplete(uploadId, uploadUrl || '');
     }
   }, [status, uploadUrl, uploadId, onUploadComplete]);
 

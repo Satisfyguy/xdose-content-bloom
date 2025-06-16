@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 interface UploadState {
   isUploading: boolean;
   progress: number;
-  status: 'idle' | 'uploading' | 'complete' | 'error';
+  status: 'idle' | 'uploading' | 'processing' | 'complete' | 'error';
   error: string | null;
   uploadUrl: string | null;
   uploadId: string | null;
@@ -25,7 +25,17 @@ export const useVideoUpload = () => {
     try {
       const res = await fetch('/api/videos/upload-url', { method: 'POST' });
       if (!res.ok) throw new Error('Failed to get upload URL');
-      const { uploadUrl, uploadId } = await res.json();
+      let { uploadUrl, uploadId } = await res.json();
+      // Log for debug
+      console.log('API uploadUrl:', uploadUrl, 'uploadId:', uploadId);
+      // Fallback: if uploadId is missing or looks like a URL, extract the ID from the URL
+      if (!uploadId && uploadUrl) {
+        const match = uploadUrl.match(/\/upload\/([\w\d]+)/);
+        if (match) uploadId = match[1];
+      } else if (uploadId && uploadId.startsWith('http')) {
+        const match = uploadId.match(/\/upload\/([\w\d]+)/);
+        if (match) uploadId = match[1];
+      }
       setState(prev => ({ ...prev, uploadUrl, uploadId, status: 'idle', isUploading: false }));
       return { uploadUrl, uploadId };
     } catch (error: any) {
